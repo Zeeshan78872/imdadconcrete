@@ -10,14 +10,10 @@
 namespace PHPUnit\TextUI\Output\Default;
 
 use const PHP_EOL;
-use function array_keys;
-use function array_merge;
 use function array_reverse;
-use function array_unique;
 use function assert;
 use function count;
 use function explode;
-use function ksort;
 use function range;
 use function sprintf;
 use function str_starts_with;
@@ -39,7 +35,6 @@ use PHPUnit\Event\Test\PhpunitWarningTriggered;
 use PHPUnit\Event\Test\PhpWarningTriggered;
 use PHPUnit\Event\Test\WarningTriggered;
 use PHPUnit\Event\TestData\NoDataSetFromDataProviderException;
-use PHPUnit\TestRunner\TestResult\Issues\Issue;
 use PHPUnit\TestRunner\TestResult\TestResult;
 use PHPUnit\TextUI\Output\Printer;
 
@@ -126,22 +121,22 @@ final class ResultPrinter
         }
 
         if ($this->displayDetailsOnTestsThatTriggerErrors) {
-            $this->printIssueList('error', $result->errors());
+            $this->printDetailsOnTestsThatTriggerErrors($result);
         }
 
         if ($this->displayDetailsOnTestsThatTriggerWarnings) {
-            $this->printIssueList('PHP warning', $result->phpWarnings());
-            $this->printIssueList('warning', $result->warnings());
+            $this->printDetailsOnTestsThatTriggerPhpWarnings($result);
+            $this->printDetailsOnTestsThatTriggerWarnings($result);
         }
 
         if ($this->displayDetailsOnTestsThatTriggerNotices) {
-            $this->printIssueList('PHP notice', $result->phpNotices());
-            $this->printIssueList('notice', $result->notices());
+            $this->printDetailsOnTestsThatTriggerPhpNotices($result);
+            $this->printDetailsOnTestsThatTriggerNotices($result);
         }
 
         if ($this->displayDetailsOnTestsThatTriggerDeprecations) {
-            $this->printIssueList('PHP deprecation', $result->phpDeprecations());
-            $this->printIssueList('deprecation', $result->deprecations());
+            $this->printDetailsOnTestsThatTriggerPhpDeprecations($result);
+            $this->printDetailsOnTestsThatTriggerDeprecations($result);
         }
     }
 
@@ -353,71 +348,122 @@ final class ResultPrinter
         $this->printList($elements);
     }
 
-    /**
-     * @psalm-param non-empty-string $type
-     * @psalm-param list<Issue> $issues
-     */
-    private function printIssueList(string $type, array $issues): void
+    private function printDetailsOnTestsThatTriggerPhpDeprecations(TestResult $result): void
     {
-        if (empty($issues)) {
+        if (!$result->hasTestTriggeredPhpDeprecationEvents()) {
             return;
         }
 
-        $numberOfUniqueIssues = count($issues);
-        $triggeringTests      = [];
+        $elements = $this->mapTestsWithIssuesEventsToElements($result->testTriggeredPhpDeprecationEvents());
 
-        foreach ($issues as $issue) {
-            $triggeringTests = array_merge($triggeringTests, array_keys($issue->triggeringTests()));
-        }
-
-        $numberOfTests = count(array_unique($triggeringTests));
-        unset($triggeringTests);
-
-        $this->printListHeader(
-            sprintf(
-                '%d test%s triggered %d %s%s:' . PHP_EOL . PHP_EOL,
-                $numberOfTests,
-                $numberOfTests !== 1 ? 's' : '',
-                $numberOfUniqueIssues,
-                $type,
-                $numberOfUniqueIssues !== 1 ? 's' : '',
-            ),
+        $this->printListHeaderWithNumberOfTestsAndNumberOfIssues(
+            $elements['numberOfTestsWithIssues'],
+            $elements['numberOfIssues'],
+            'PHP deprecation',
         );
 
-        $i = 1;
+        $this->printList($elements['elements']);
+    }
 
-        foreach ($issues as $issue) {
-            $title = sprintf(
-                '%s:%d',
-                $issue->file(),
-                $issue->line(),
-            );
-
-            $body = trim($issue->description()) . PHP_EOL . PHP_EOL . 'Triggered by:';
-
-            $triggeringTests = $issue->triggeringTests();
-
-            ksort($triggeringTests);
-
-            foreach ($triggeringTests as $triggeringTest) {
-                $body .= PHP_EOL . PHP_EOL . '* ' . $triggeringTest['test']->id();
-
-                if ($triggeringTest['count'] > 1) {
-                    $body .= sprintf(
-                        ' (%d times)',
-                        $triggeringTest['count'],
-                    );
-                }
-
-                if ($triggeringTest['test']->isTestMethod()) {
-                    $body .= PHP_EOL . '  ' . $triggeringTest['test']->file() . ':' . $triggeringTest['test']->line();
-                }
-            }
-
-            $this->printIssueListElement($i++, $title, $body);
-
-            $this->printer->print(PHP_EOL);
+    private function printDetailsOnTestsThatTriggerDeprecations(TestResult $result): void
+    {
+        if (!$result->hasTestTriggeredDeprecationEvents()) {
+            return;
         }
+
+        $elements = $this->mapTestsWithIssuesEventsToElements($result->testTriggeredDeprecationEvents());
+
+        $this->printListHeaderWithNumberOfTestsAndNumberOfIssues(
+            $elements['numberOfTestsWithIssues'],
+            $elements['numberOfIssues'],
+            'deprecation',
+        );
+
+        $this->printList($elements['elements']);
+    }
+
+    private function printDetailsOnTestsThatTriggerErrors(TestResult $result): void
+    {
+        if (!$result->hasTestTriggeredErrorEvents()) {
+            return;
+        }
+
+        $elements = $this->mapTestsWithIssuesEventsToElements($result->testTriggeredErrorEvents());
+
+        $this->printListHeaderWithNumber(
+            $elements['numberOfIssues'],
+            'error',
+        );
+
+        $this->printList($elements['elements']);
+    }
+
+    private function printDetailsOnTestsThatTriggerPhpNotices(TestResult $result): void
+    {
+        if (!$result->hasTestTriggeredPhpNoticeEvents()) {
+            return;
+        }
+
+        $elements = $this->mapTestsWithIssuesEventsToElements($result->testTriggeredPhpNoticeEvents());
+
+        $this->printListHeaderWithNumberOfTestsAndNumberOfIssues(
+            $elements['numberOfTestsWithIssues'],
+            $elements['numberOfIssues'],
+            'PHP notice',
+        );
+
+        $this->printList($elements['elements']);
+    }
+
+    private function printDetailsOnTestsThatTriggerNotices(TestResult $result): void
+    {
+        if (!$result->hasTestTriggeredNoticeEvents()) {
+            return;
+        }
+
+        $elements = $this->mapTestsWithIssuesEventsToElements($result->testTriggeredNoticeEvents());
+
+        $this->printListHeaderWithNumberOfTestsAndNumberOfIssues(
+            $elements['numberOfTestsWithIssues'],
+            $elements['numberOfIssues'],
+            'notice',
+        );
+
+        $this->printList($elements['elements']);
+    }
+
+    private function printDetailsOnTestsThatTriggerPhpWarnings(TestResult $result): void
+    {
+        if (!$result->hasTestTriggeredPhpWarningEvents()) {
+            return;
+        }
+
+        $elements = $this->mapTestsWithIssuesEventsToElements($result->testTriggeredPhpWarningEvents());
+
+        $this->printListHeaderWithNumberOfTestsAndNumberOfIssues(
+            $elements['numberOfTestsWithIssues'],
+            $elements['numberOfIssues'],
+            'PHP warning',
+        );
+
+        $this->printList($elements['elements']);
+    }
+
+    private function printDetailsOnTestsThatTriggerWarnings(TestResult $result): void
+    {
+        if (!$result->hasTestTriggeredWarningEvents()) {
+            return;
+        }
+
+        $elements = $this->mapTestsWithIssuesEventsToElements($result->testTriggeredWarningEvents());
+
+        $this->printListHeaderWithNumberOfTestsAndNumberOfIssues(
+            $elements['numberOfTestsWithIssues'],
+            $elements['numberOfIssues'],
+            'warning',
+        );
+
+        $this->printList($elements['elements']);
     }
 
     private function printListHeaderWithNumberOfTestsAndNumberOfIssues(int $numberOfTestsWithIssues, int $numberOfIssues, string $type): void
@@ -484,21 +530,6 @@ final class ResultPrinter
             sprintf(
                 "%s%d) %s\n%s%s",
                 $number > 1 ? "\n" : '',
-                $number,
-                $title,
-                $body,
-                !empty($body) ? "\n" : '',
-            ),
-        );
-    }
-
-    private function printIssueListElement(int $number, string $title, string $body): void
-    {
-        $body = trim($body);
-
-        $this->printer->print(
-            sprintf(
-                "%d) %s\n%s%s",
                 $number,
                 $title,
                 $body,

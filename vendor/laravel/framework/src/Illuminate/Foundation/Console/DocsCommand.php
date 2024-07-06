@@ -16,8 +16,6 @@ use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 use Throwable;
 
-use function Laravel\Prompts\suggest;
-
 #[AsCommand(name: 'docs')]
 class DocsCommand extends Command
 {
@@ -181,7 +179,7 @@ class DocsCommand extends Command
 
         return $this->didNotRequestPage()
             ? $this->askForPage()
-            : $this->guessPage($this->argument('page'));
+            : $this->guessPage();
     }
 
     /**
@@ -231,20 +229,18 @@ class DocsCommand extends Command
      */
     protected function askForPageViaAutocomplete()
     {
-        $choice = suggest(
-            label: 'Which page would you like to open?',
-            options: fn ($value) => $this->pages()
-                ->mapWithKeys(fn ($option) => [
-                    Str::lower($option['title']) => $option['title'],
-                ])
-                ->filter(fn ($title) => str_contains(Str::lower($title), Str::lower($value)))
-                ->all(),
-            placeholder: 'E.g. Collections'
+        $choice = $this->components->choice(
+            'Which page would you like to open?',
+            $this->pages()->mapWithKeys(fn ($option) => [
+                Str::lower($option['title']) => $option['title'],
+            ])->all(),
+            'installation',
+            3
         );
 
         return $this->pages()->filter(
             fn ($page) => $page['title'] === $choice || Str::lower($page['title']) === $choice
-        )->keys()->first() ?: $this->guessPage($choice);
+        )->keys()->first() ?: null;
     }
 
     /**
@@ -252,22 +248,22 @@ class DocsCommand extends Command
      *
      * @return string|null
      */
-    protected function guessPage($search)
+    protected function guessPage()
     {
         return $this->pages()
             ->filter(fn ($page) => str_starts_with(
                 Str::slug($page['title'], ' '),
-                Str::slug($search, ' ')
+                Str::slug($this->argument('page'), ' ')
             ))->keys()->first() ?? $this->pages()->map(fn ($page) => similar_text(
                 Str::slug($page['title'], ' '),
-                Str::slug($search, ' '),
+                Str::slug($this->argument('page'), ' '),
             ))
-            ->filter(fn ($score) => $score >= min(3, Str::length($search)))
+            ->filter(fn ($score) => $score >= min(3, Str::length($this->argument('page'))))
             ->sortDesc()
             ->keys()
             ->sortByDesc(fn ($slug) => Str::contains(
                 Str::slug($this->pages()[$slug]['title'], ' '),
-                Str::slug($search, ' ')
+                Str::slug($this->argument('page'), ' ')
             ) ? 1 : 0)
             ->first();
     }

@@ -16,6 +16,7 @@
             background-color: rgba(238, 242, 247, 1);
             font-family: Nunito;
             font-size: 15px;
+            font-weight: 600;
             line-height: 22px;
             letter-spacing: 0em;
             text-align: left;
@@ -39,15 +40,10 @@
 @endsection
 @section('content')
     <div class="container mb-5">
-
-        <div class="row">
-            <div class="col-md-6   top-left-view">
-                <span>Existing Bank Details</span>
-            </div>
-            <div class="col-md-6  top-right-view d-flex align-items-center justify-content-end">
-                <a href="{{ route('bank.create') }}" class="btn btn-primary">Add A Bank</a>
-            </div>
+        <div class="inner-container">
+            <span>Existing Bank Details</span>
         </div>
+
         <!-------------------- Apply Filter ---------------------->
 
         <div class="card stockCard shadow-2-strong bg-white mt-5 ">
@@ -65,13 +61,12 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="account_category" class="form-label filter-title">Account Category</label>
+                                <label for="account_category" class="form-label">Account Category</label>
                                 <select class="form-select form-select-md" name="account_category" id="account_category">
                                     <option value="">Choose Account Category</option>
                                     @foreach ($AccountCategory as $category)
-                                        <option {{ ($filter['account_category'] ?? '') == $category ? 'selected' : '' }}
-                                            value="{{ $category }}">{{ $category }}</option>
-                                    @endforeach
+                                    <option {{(($filter['account_category'] ?? '') == $category)?'selected':'' }} value="{{ $category }}">{{ $category }}</option>
+                                @endforeach
                                 </select>
                             </div>
                         </div>
@@ -79,7 +74,7 @@
                         <div class="col-md-9">
                             <div class="text-end mt-4">
                                 <a href="{{ route('bank.index') }}"
-                                    class="btn btn-light text-primary btn-rest mx-3">Reset</a>
+                                    class="btn btn-light text-primary btn-rest">Reset</a>
                                 <button type="submit" class="btn btn-primary">Apply Filter</button>
                             </div>
                         </div>
@@ -94,20 +89,17 @@
         <div class="card stockCard shadow-2-strong bg-white mt-5 py-2 px-3">
             <div class="card-body">
                 <div class="table-responsive">
-                    <h4 class="page-title p-3"><span class="me-3">TOTAL OUTSIDERS BANKS: {{ $outsiderCount }} </span>
-                        <span>TOTAL INSIDE - BUSINESS BANKS: {{ $insideCount }}</span>
-                    </h4>
                     <table class="table table-bordered" id="">
                         <thead class="">
                             <tr>
-                                <th scope="col" class="text-blod">Account Category</th>
-                                <th scope="col" class="text-blod">Account Title - Bank Name</th>
-                                <th scope="col" class="text-blod">Account Number</th>
-                                <th scope="col" class="text-blod">City - Branch Address</th>
-                                <th scope="col" class="text-blod">Account type</th>
-                                <th scope="col" class="text-blod">Status</th>
-                                <th scope="col" class="text-blod">Account Owners</th>
-                                <th scope="col" class="text-blod">Action</th>
+                                <th scope="col">Account Category</th>
+                                <th scope="col">Account Title - Bank Name</th>
+                                <th scope="col">Account Number</th>
+                                <th scope="col">City - Branch Address</th>
+                                <th scope="col">Account type</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Account Owners</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -124,8 +116,7 @@
                                     <td>
                                         <!-- edit -->
                                         <a class="btn  btn-sm btn-parrot-green text-white"
-                                            href="{{ route('bank.edit', $bank->id) }}"><i
-                                                class="fa-solid fa-pencil"></i></a>
+                                            href="{{ route('bank.edit', $bank->id) }}"><i class="fa-solid fa-pencil"></i></a>
                                         <!-- delete -->
                                         <!-- Modal Body -->
                                         @php

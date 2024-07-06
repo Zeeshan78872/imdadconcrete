@@ -1330,8 +1330,6 @@ class Mailable implements MailableContract, Renderable
      */
     public function assertHasSubject($subject)
     {
-        $this->renderForAssertions();
-
         PHPUnit::assertTrue(
             $this->hasSubject($subject),
             "Did not see expected text [{$subject}] in email subject."

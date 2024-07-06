@@ -19,12 +19,9 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id',
-        'name',
         'username',
         'password',
-        'role',
-        'last_activity'
+        'role'
     ];
 
     /**
@@ -49,14 +46,7 @@ class User extends Authenticatable
     protected function role(): Attribute
     {
         return new Attribute(
-            get: fn ($value) =>  ["Moderator", "Manager", "Admin"][$value],
+            get: fn ($value) =>  ["manager", "superManager", "superAdmin"][$value],
         );
-    }
-    public function isOnline()
-    {
-        // Define a threshold for considering a user as online (e.g., within the last 5 minutes).
-        $threshold = now()->subMinutes(5);
-
-        return $this->last_activity > $threshold;
     }
 }

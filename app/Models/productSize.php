@@ -14,7 +14,6 @@ class productSize extends Model
         'size',
         'sft',
         'quantity_farma',
-        'total_farma',
-        'delete'
+        'total_farma'
     ];
 }

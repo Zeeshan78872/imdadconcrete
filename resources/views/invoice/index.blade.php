@@ -11,7 +11,7 @@
         }
 
         .card {
-            width: 100%;
+            border: none !important;
         }
 
         .inner-container {
@@ -26,6 +26,7 @@
             background-color: rgba(238, 242, 247, 1);
             font-family: Nunito;
             font-size: 15px;
+            font-weight: 600;
             line-height: 22px;
             letter-spacing: 0em;
             text-align: left;
@@ -51,17 +52,11 @@
 @endsection
 @section('content')
     <div class="container mb-5">
-
-
-        <div class="row">
-            <div class="col-md-6   top-left-view">
-                <span>Invoice Listing</span>
-            </div>
-            <div class="col-md-6  top-right-view d-flex align-items-center justify-content-end">
-                <a href="{{ route('invoice.create') }}" class="btn btn-primary float-right">Create Invoice</a>
-            </div>
+        <div class="inner-container">
+            <span>Invoice Listing</span>
+            <a href="{{ route('invoice.create') }}" class="btn btn-primary float-right">Create Invoice</a>
         </div>
-
+        <!-- Model for success message after add invoice successfully -->
         <div class="modal fade" id="modalIdSuccess" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
             role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -114,14 +109,14 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="from_date" class="form-label filter-title">From Date</label>
+                                <label for="from_date" class="form-label">From Date</label>
                                 <input type="date" class="form-control" name="from_date"
                                     value="{{ $filter['from_date'] ?? '' }}" id="from_date" placeholder="">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="to_date" class="form-label filter-title">To Date</label>
+                                <label for="to_date" class="form-label">To Date</label>
                                 <input type="date" class="form-control" name="to_date"
                                     value="{{ $filter['to_date'] ?? '' }}" id="to_date" placeholder="">
                             </div>
@@ -129,7 +124,7 @@
 
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="customer_id" class="form-label filter-title">Customer Name</label>
+                                <label for="customer_id" class="form-label">Customer Name</label>
                                 <select id="searchableSelect" class="form-select form-control form-select-md " required
                                     name="customer_id">
                                     <option value="">Choose Customer</option>
@@ -142,7 +137,7 @@
                         </div>
                         <div class="col-md-3 d-flex align-items-center justify-content-center">
                             <div class="text-end">
-                                <button type="button" class="btn btn-light text-primary btn-rest mx-3">Reset</button>
+                                <button type="button" class="btn btn-light text-primary btn-rest">Reset</button>
                                 <button type="submit" class="btn btn-primary">Apply Filter</button>
                             </div>
                         </div>
@@ -158,11 +153,11 @@
                     <table class="table table-bordered" id="">
                         <thead class="">
                             <tr>
-                                <th scope="col" class="text-blod">Invoice No.</th>
-                                <th scope="col" class="text-blod">Date</th>
-                                <th scope="col" class="text-blod">Customer Name</th>
-                                <th scope="col" class="text-blod">Total Amount</th>
-                                <th scope="col" class="text-blod">Action</th>
+                                <th scope="col">Invoice No.</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Customer Name</th>
+                                <th scope="col">Total Amount</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead class="table table-dark">
                         <tbody>
@@ -184,7 +179,7 @@
                                         <!-- edit -->
                                         <a class="btn  btn-sm btn-parrot-green text-white"
                                             href="{{ route('invoice.edit', 0) }}"><i class="fa-solid fa-pencil"></i></a>
-
+                                       
                                         <!-- delete -->
                                         @php
                                             $model_id = 'modelDelete' . $invoice->id;

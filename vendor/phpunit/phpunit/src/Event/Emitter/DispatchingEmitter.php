@@ -238,28 +238,6 @@ final class DispatchingEmitter implements Emitter
      * @throws InvalidArgumentException
      * @throws UnknownEventTypeException
      */
-    public function testRunnerDisabledGarbageCollection(): void
-    {
-        $this->dispatcher->dispatch(
-            new TestRunner\GarbageCollectionDisabled($this->telemetryInfo()),
-        );
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     * @throws UnknownEventTypeException
-     */
-    public function testRunnerTriggeredGarbageCollection(): void
-    {
-        $this->dispatcher->dispatch(
-            new TestRunner\GarbageCollectionTriggered($this->telemetryInfo()),
-        );
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     * @throws UnknownEventTypeException
-     */
     public function testSuiteSkipped(TestSuite $testSuite, string $message): void
     {
         $this->dispatcher->dispatch(
@@ -1076,17 +1054,6 @@ final class DispatchingEmitter implements Emitter
                 $this->telemetryInfo(),
                 $message,
             ),
-        );
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     * @throws UnknownEventTypeException
-     */
-    public function testRunnerEnabledGarbageCollection(): void
-    {
-        $this->dispatcher->dispatch(
-            new TestRunner\GarbageCollectionEnabled($this->telemetryInfo()),
         );
     }
 

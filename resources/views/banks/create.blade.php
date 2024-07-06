@@ -3,7 +3,7 @@
 @section('style')
     <style>
         .card {
-            margin-top: 90px !important;
+            margin-top: 161px !important;
         }
     </style>
 @endsection
@@ -37,15 +37,14 @@
 
                         <div class="col-md-4">
                             <div class="mb-4">
-                                <label for="account_category" class="form-label text-blod">Account Category
+                                <label for="account_category" class="form-label">Account Category
                                     <sup class="text-danger"><b>*</b></sup>
                                 </label>
                                 <select class="form-select form-select-md @error('account_category') is-invalid @enderror"
                                     name="account_category" id="account_category">
                                     <option value="">Choose Account Category</option>
                                     @foreach ($AccountCategory as $category)
-                                        <option {{ old('account_category') == $category ? 'selected' : '' }}
-                                            value="{{ $category }}">{{ $category }}</option>
+                                        <option {{(old('account_category') == $category)?'selected':'' }} value="{{ $category }}">{{ $category }}</option>
                                     @endforeach
                                 </select>
                                 @error('account_category')
@@ -57,7 +56,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-4">
-                                <label for="title_bank_name" class="form-label text-blod">Account Title - Bank Name
+                                <label for="title_bank_name" class="form-label">Account Title - Bank Name
                                     <sup class="text-danger"><b>*</b></sup>
                                 </label>
                                 <input type="text" class="form-control @error('title_bank_name') is-invalid @enderror"
@@ -72,7 +71,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-4">
-                                <label for="account_number" class="form-label text-blod">Account Number / IBAN <sup
+                                <label for="account_number" class="form-label">Account Number <sup
                                         class="text-danger"><b>*</b></sup></label>
                                 <input type="text" class="form-control  @error('account_number') is-invalid @enderror"
                                     name="account_number" value="{{ old('account_number') }}" id="account_number"
@@ -87,8 +86,7 @@
 
                         <div class="col-md-4">
                             <div class="mb-4">
-                                <label for="city_branch_add" class="form-label text-blod">City - Branch Address
-                                    (Optional)</label>
+                                <label for="city_branch_add" class="form-label">City - Branch Address (Optional)</label>
                                 <input type="text" class="form-control" name="city_branch_add"
                                     value="{{ old('city_branch_add') }}" id="city_branch_add" aria-describedby="helpId"
                                     placeholder="">
@@ -96,7 +94,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-4">
-                                <label for="account_type" class="form-label text-blod">Account Type (Optional)</label>
+                                <label for="account_type" class="form-label">Account Type (Optional)</label>
                                 <input type="text" class="form-control" name="account_type"
                                     value="{{ old('account_type') }}" id="account_type" aria-describedby="helpId"
                                     placeholder="">
@@ -104,20 +102,19 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-4">
-                                <label for="status" class="form-label text-blod">Status (Optional)
+                                <label for="status" class="form-label">Status (Optional)
                                 </label>
                                 <select class="form-select form-select-md" name="status" id="status">
                                     <option value="">Choose Status</option>
                                     @foreach ($AccountStatus as $status)
-                                        <option {{ old('status') == $status ? 'selected' : '' }}
-                                            value="{{ $status }}">{{ $status }}</option>
+                                        <option {{(old('status') == $status)?'selected':'' }} value="{{ $status }}">{{ $status }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-4">
-                                <label for="account_owner" class="form-label text-blod">Account Owners <sup
+                                <label for="account_owner" class="form-label">Account Owners <sup
                                         class="text-danger"><b>*</b></sup></label>
                                 <input type="text" class="form-control  @error('account_owner') is-invalid @enderror"
                                     name="account_owner" value="{{ old('account_owner') }}" id="account_owner"
@@ -131,7 +128,7 @@
                         </div>
                     </div>
                     <div class="text-center mt-3">
-                        <button type="reset" class="btn btn-light text-primary btn-rest mx-3">Reset</button>
+                        <button type="reset" class="btn btn-light text-primary btn-rest">Reset</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </form>

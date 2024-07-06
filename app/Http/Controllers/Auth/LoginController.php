@@ -29,12 +29,11 @@ class LoginController extends Controller
      */
     protected $redirectTo;
 
-    protected function redirectTo()
-    {
-        if (auth()->check()) {
-            return redirect()->route('dashboard');
-        } else {
-            return redirect()->route('login');
+    protected function redirectTo() {
+        if(auth()->check()){
+                return redirect()->route('dashboard');
+        }else{
+                return redirect()->route('login');
         }
     }
     /**
@@ -51,26 +50,22 @@ class LoginController extends Controller
         $input = $request->all();
 
         $this->validate($request, [
-            'username' => 'required|exists:users,username',
+            'username' => 'required',
             'password' => 'required',
-        ], [
-            'username.required' => 'The username field is required.',
-            'username.exists' => 'The username that you have entered is incorrect.',
-            'password.required' => 'The password field is required.',
         ]);
 
         $remember = $request->has('remember') ? true : false;
-        if (auth()->attempt(array('username' => $input['username'], 'password' => $input['password']), $remember)) {
-            if (auth()->check()) {
-                // dd(auth());
+
+        if(auth()->attempt(array('username' => $input['username'], 'password' => $input['password']),$remember))
+        {
+            if(auth()->check()){
                 return redirect()->route('dashboard');
-            }
-        } else {
-            return redirect()->route('login')->withErrors([
-                // 'username' => 'The username that you have entered is incorrect.',
-                'password' => 'The password that you have entered is incorrect.',
-            ])
-                ->withInput();
         }
+        }else{
+            return redirect()->route('login')
+                ->with('error','Username And Password Are Wrong.');
+        }
+
     }
+
 }

@@ -484,7 +484,6 @@ class Kernel implements KernelContract
 
             if ($this->symfonyDispatcher instanceof EventDispatcher) {
                 $this->artisan->setDispatcher($this->symfonyDispatcher);
-                $this->artisan->setSignalsToDispatchEvent();
             }
         }
 

@@ -26,7 +26,10 @@
             <div class="col-6 col-md-auto  top-left">
                 <span>Add Tuff Tiles & Block Stock</span>
             </div>
+
+
         </div>
+
         <div class="card stockCard shadow-2-strong bg-white  py-2 px-3">
             <div class="card-header bg-white text-center">
                 <h4 class="page-title">Enter Tuff Tiles & Block Stock Details</h4>
@@ -43,7 +46,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="date" class="form-label text-blod">Date <sup
+                                <label for="date" class="form-label">Date <sup
                                         class="text-danger"><b>*</b></sup></label>
                                 <input type="date" class="form-control  @error('date') is-invalid @enderror"
                                     name="date" id="date" value="{{ date('Y-m-d') }}" placeholder="">
@@ -56,21 +59,148 @@
                         </div>
                     </div>
 
+                    <div class="row bg-light py-2 mb-2">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="plant_name" class="form-label">Plant Name <sup
+                                        class="text-danger"><b>*</b></sup> </label>
+                                <select class="form-select form-select-md  @error('plant_name.0') is-invalid @enderror"
+                                    name="plant_name[]" id="plant_name">
+                                    <option value="">Choose Plant Name</option>
+                                    @foreach ($PlantName as $name)
+                                        <option {{ old('plant_name.0') == $name ? 'selected' : '' }}
+                                            value="{{ $name }}">{{ $name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('plant_name.0')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>This Cement Packs field is required</strong>
+                                    </span>
+                                @enderror
 
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="itemSelect_-1" class="form-label">Product Name <sup
+                                        class="text-danger"><b>*</b></sup></label>
+                                <select id="itemSelect_-1"
+                                    class="form-select form-select-md @error('product_id.0') is-invalid @enderror"
+                                    onchange="ItemChange(-1)" name="product_id[]">
+                                    <option value="">Choose Product Name</option>
+                                    @foreach ($products as $product)
+                                        <option {{ old('product_id.0') == $product->id ? 'selected' : '' }}
+                                            value="{{ $product->id }}">{{ $product->name }}</option>
+                                    @endforeach
+                                </select>
+
+                                @error('product_id.0')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>This Product Name field is required</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="showSize_-1" class="form-label">Size <sup
+                                        class="text-danger"><b>*</b></sup></label>
+                                <select id="showSize_-1"
+                                    class="form-select form-select-md @error('size.0') is-invalid @enderror"
+                                    onchange="SelectQuantity(-1)" name="size[]">
+                                    <option value="">Choose Size</option>
+                                </select>
+                                @error('size.0')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>This Size field is required</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="cement_pack" class="form-label">Cement Packs <sup
+                                        class="text-danger"><b>*</b></sup></label>
+                                <input type="number" class="form-control  @error('cement_pack.0') is-invalid @enderror"
+                                    name="cement_pack[]" id="cement_pack" value="{{ old('cement_pack.0') }}"
+                                    placeholder="">
+                                @error('cement_pack.0')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>This Cement Packs field required</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="pallet_no" class="form-label">No. of Pallets <sup
+                                        class="text-danger"><b>*</b></sup></label>
+                                <input type="number" class="form-control @error('pallet_no.0') is-invalid @enderror"
+                                    name="pallet_no[]" id="pallet_no-1" onchange="NewCalculateTiles(-1)" placeholder="">
+                                <input type="hidden" value="{{ old('pallet_no.0') }}" id="sft_ratio-1">
+                                @error('pallet_no.0')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>This No. of Pallets field is required</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="tiles_pallet" class="form-label">Tiles / Pallet <sup
+                                        class="text-danger"><b>*</b></sup></label>
+                                <input type="number" class="form-control @error('tiles_pallet.0') is-invalid @enderror"
+                                    name="tiles_pallet[]" value="{{ old('tiles_pallet.0') }}" id="tiles-1"
+                                    onchange="NewCalculateTiles(-1)" placeholder="">
+                                @error('tiles_pallet.0')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>This Tiles / Pallet field is required</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="totla_tiles" class="form-label">Total Tiles in SFT <sup
+                                        class="text-danger"><b>*</b></sup></label>
+                                <input type="number"
+                                    class="form-control bg-light @error('totla_tiles.0') is-invalid @enderror"
+                                    name="totla_tiles[]" value="{{ old('totla_tiles.0', 0) }}" readonly
+                                    id="total_tiles-1" placeholder="">
+                                @error('totla_tiles.0')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong> This Total Tiles in SFT field is required</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4 my-4 py-1">
+                            <button type="button" class="btn btn-primary" onclick="addNewProductSet()"> <span><i
+                                        class="fa-solid fa-plus"></i></span> Add
+                                More Product</button>
+                        </div>
+                    </div>
                     <input type="hidden" name="productCount" id="productCount" value="{{ old('productCount', 0) }}">
                     <div id="productField">
                         @php
                             $productCount = old('productCount');
-                            $old = 0;
+                            echo $productCount;
                         @endphp
                         @for ($i = 0; $i < $productCount; $i++)
-                            <div class="row bg-light py-2 mb-2 product-div" id="field_{{ $i }}">
+                            @php
+                                $old = $i + 1;
+
+                            @endphp
+                            {{-- @foreach ($errors->get('plant_name.*') as $index => $fieldErrors) --}}
+                            {{-- {{ $index }} --}}
+                            <div class="row bg-light py-2 mb-2" id="field_{{ $i }}">
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="" class="form-label text-blod">Plant Name<sup
+                                        <label for="" class="form-label">Plant Name<sup
                                                 class="text-danger"><b>*</b></sup></label>
                                         <select id=""
-                                            class="form-select  form-select-md   @error('product_id.' . $old) is-invalid @enderror"
+                                            class="form-select  form-select-md  @error('product_id.' . $old) is-invalid @enderror"
                                             name="plant_name[]" id="">
                                             <option value="">Choose Plant Name</option>
                                             @foreach ($PlantName as $name)
@@ -80,18 +210,18 @@
                                         </select>
                                         @error('plant_name.' . $old)
                                             <span class="invalid-feedback" role="alert">
-                                                <strong> Plant Name is required</strong>
+                                                <strong>This Plant Name is required</strong>
                                             </span>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="itemSelect_{{ $i }}" class="form-label text-blod">Product
-                                            Name <sup class="text-danger"><b>*</b></sup></label>
+                                        <label for="itemSelect_{{ $i }}" class="form-label">Product Name <sup
+                                                class="text-danger"><b>*</b></sup></label>
                                         <select id="itemSelect_{{ $i }}"
                                             onchange="ItemChange({{ $i }})"
-                                            class="form-select  form-select-md   @error('product_id.' . $old) is-invalid @enderror"
+                                            class="form-select  form-select-md  @error('product_id.' . $old) is-invalid @enderror"
                                             name="product_id[]" id="">
                                             <option value="">Choose Product Name</option>
                                             @foreach ($products as $product)
@@ -101,62 +231,54 @@
                                         </select>
                                         @error('product_id.' . $old)
                                             <span class="invalid-feedback" role="alert">
-                                                <strong> Product Name is required</strong>
+                                                <strong>This Product Name field is required</strong>
                                             </span>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="showSize_{{ $i }}" class="form-label text-blod">Size <sup
+                                        <label for="showSize_{{ $i }}" class="form-label">Size <sup
                                                 class="text-danger"><b>*</b></sup></label>
                                         <select
-                                            id="showSize_{{ $i }}"class="form-select  form-select-md   @error('size.' . $old) is-invalid @enderror"
+                                            id="showSize_{{ $i }}"class="form-select  form-select-md  @error('size.' . $old) is-invalid @enderror"
                                             onchange="SelectQuantity(-1)" name="size[]" id="">
                                             <option value="">Choose Size</option>
-                                            @if (old('product_id.' . $old) && old('product_id.' . $old) != null)
-                                                @foreach ($sizes as $size)
-                                                    @if ($size->product_id == old('product_id.' . $old))
-                                                        <option {{ old('size.' . $old) == $size->id ? 'selected' : '' }}
-                                                            value="{{ $size->id }}">{{ $size->size }}</option>
-                                                    @endif
-                                                @endforeach
-                                            @endif
                                         </select>
                                         @error('size.' . $old)
                                             <span class="invalid-feedback" role="alert">
-                                                <strong> Size is required</strong>
+                                                <strong>This Size field is required</strong>
                                             </span>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="cement_pack" class="form-label text-blod">Cement Packs <sup
+                                        <label for="cement_pack" class="form-label">Cement Packs <sup
                                                 class="text-danger"><b>*</b></sup></label>
-                                        <input type="number"
-                                            class="form-control number-input  @error('cement_pack.' . $old) is-invalid @enderror "
-                                            value="{{ old('cement_pack.' . $old) }}" name="cement_pack[]" id="cement_pack"
-                                            placeholder="">
+                                        <input type="text"
+                                            class="form-control @error('cement_pack.' . $old) is-invalid @enderror "
+                                            value="{{ old('cement_pack.' . $old) }}" name="cement_pack[]"
+                                            id="cement_pack" placeholder="">
                                         @error('cement_pack.' . $old)
                                             <span class="invalid-feedback" role="alert">
-                                                <strong> Cement Packs is required</strong>
+                                                <strong>This Cement Packs field is required</strong>
                                             </span>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="pallet_no{{ $i }}" class="form-label text-blod">No. of
-                                            Pallets <sup class="text-danger"><b>*</b></sup></label>
-                                        <input type="number"
-                                            class="form-control number-input   @error('pallet_no.' . $old) is-invalid @enderror "
+                                        <label for="pallet_no{{ $i }}" class="form-label">No. of Pallets <sup
+                                                class="text-danger"><b>*</b></sup></label>
+                                        <input type="text"
+                                            class="form-control  @error('pallet_no.' . $old) is-invalid @enderror "
                                             name="pallet_no[]" id="pallet_no{{ $i }}"
                                             value="{{ old('pallet_no.' . $old) }}"
                                             onchange="NewCalculateTiles({{ $i }})" placeholder="">
                                         @error('pallet_no.' . $old)
                                             <span class="invalid-feedback" role="alert">
-                                                <strong> No. of Pallets is required</strong>
+                                                <strong>This No. of Pallets field is required</strong>
                                             </span>
                                         @enderror
                                         <input type="hidden" value="{{ old('sft_ratio.' . $old) }}" name="sft_ratio[]"
@@ -165,50 +287,48 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="tiles{{ $i }}" class="form-label text-blod">Tiles / Pallet
-                                            <sup class="text-danger"><b>*</b></sup></label>
-                                        <input type="number"
-                                            class="form-control number-input  @error('cement_pack.' . $old) is-invalid @enderror"
+                                        <label for="tiles{{ $i }}" class="form-label">Tiles / Pallet <sup
+                                                class="text-danger"><b>*</b></sup></label>
+                                        <input type="text"
+                                            class="form-control  @error('cement_pack.' . $old) is-invalid @enderror"
                                             name="tiles_pallet[]" id="tiles{{ $i }}"
                                             value="{{ old('tiles_pallet.' . $old) }}"
                                             onchange="NewCalculateTiles({{ $i }})" placeholder="">
                                         @error('tiles_pallet.' . $old)
                                             <span class="invalid-feedback" role="alert">
-                                                <strong> Tiles / Pallet is required</strong>
+                                                <strong>This Tiles / Pallet field is required</strong>
                                             </span>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="totla_tiles" class="form-label text-blod">Total Tiles in SFT <sup
+                                        <label for="totla_tiles" class="form-label">Total Tiles in SFT <sup
                                                 class="text-danger"><b>*</b></sup></label>
-                                        <input type="number" id="total_tiles{{ $i }}"
-                                            class="form-control number-input non-edit-able" name="totla_tiles[]"
-                                            value="{{ old('totla_tiles.' . $old, 0) }}" readonly id="totla_tiles"
-                                            placeholder="">
+                                        <input type="text" id="total_tiles{{ $i }}" class="form-control"
+                                            name="totla_tiles[]" value="{{ old('totla_tiles.' . $old, 0) }}" readonly
+                                            id="totla_tiles" placeholder="">
 
                                     </div>
                                 </div>
                                 <div class="col-md-4 d-flex align-items-center">
-                                    <button class="btn btn-danger remove-button" type="button"
+                                    <button class="btn btn-danger" type="button"
                                         onclick="removeField('field_{{ $i }}')"><i
                                             class="fa-solid fa-xmark"></i></button>
                                 </div>
                             </div>
-
-                            @php
-                                $old++;
-                            @endphp
+                            {{-- @foreach ($fieldErrors as $error)
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $error }}</strong>
+                                </span>
+                            @endforeach
+                        @endforeach --}}
                         @endfor
 
                     </div>
                     <div class="text-center">
-                        <button type="button" class="btn btn-primary" onclick="addNewProductSet()"> <span><i
-                                    class="fa-solid fa-plus"></i></span> Add
-                            More Product</button>
                         <button type="reset"
-                            class="btn btn-light text-primary btn-rest rounded-0 mx-3 my-2">Reset</button>
+                            class="btn btn-light text-primary btn-rest rounded-0 mx-1 my-2">Reset</button>
                         <button type="submit" class="btn btn-primary rounded-0 mx-1 my-2">Submit</button>
                     </div>
                 </form>
@@ -221,17 +341,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script>
-        function getLastProductDiv() {
-            const productDivs = document.querySelectorAll('.product-div');
-            const countDiv = productDivs.length;
-            const firstProductDiv = document.querySelector('.remove-button:first-of-type');
-            if (countDiv == 1) {
-                firstProductDiv.style.display = 'none'
-            } else {
-                firstProductDiv.style.display = 'block'
-            }
-        }
-
         function CalculateTiles(count) {
             let no_pallet, tiles_pallet, total_tiles;
             if (count == -1) {
@@ -290,24 +399,22 @@
         const productCountElement = document.getElementById('productCount');
         let productCount = parseInt(productCountElement.value, 10);
 
-
         function addNewProductSet() {
-            const productCountElement = document.getElementById('productCount');
-            let productCount = parseInt(productCountElement.value, 10);
             const productField = document.getElementById('productField');
+
             // Create a new product row
             const newProductRow = document.createElement('div');
-            newProductRow.classList.add('row', 'bg-light', 'py-2', 'my-3', 'product-div');
+            newProductRow.classList.add('row', 'bg-light', 'py-2', 'my-3');
             newProductRow.setAttribute("id", `field_${productCount}`);
 
             // Your original structure (without the button)
             newProductRow.innerHTML = `
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="" class="form-label text-blod">Plant Name <sup
+                                    <label for="" class="form-label">Product Name <sup
                                             class="text-danger"><b>*</b></sup></label>
                                     <select id="" class="form-select  form-select-md"  name="plant_name[]" id="">
-                                        <option value="">Choose Plant Name</option>
+                                        <option value="">Choose Product Name</option>
                                         @foreach ($PlantName as $name)
                                         <option  value="{{ $name }}">{{ $name }}</option>
                                     @endforeach
@@ -321,7 +428,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="itemSelect_${productCount}" class="form-label text-blod">Product Name <sup
+                                    <label for="itemSelect_${productCount}" class="form-label">Product Name <sup
                                             class="text-danger"><b>*</b></sup></label>
                                     <select id="itemSelect_${productCount}" onchange="ItemChange(${productCount})" class="form-select  form-select-md" name="product_id[]" id="">
                                         <option value="">Choose Product Name</option>
@@ -333,81 +440,66 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="showSize_${productCount}" class="form-label text-blod">Size <sup
+                                    <label for="showSize_${productCount}" class="form-label">Size <sup
                                             class="text-danger"><b>*</b></sup></label>
                                     <select id="showSize_${productCount}"class="form-select  form-select-md" onchange="SelectQuantity(${productCount})" name="size[]" id="">
-                                        <option value="">Choose Size</option>
+                                        <option selected>Choose Size</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="cement_pack" class="form-label text-blod">Cement Packs <sup
+                                <label for="cement_pack" class="form-label">Cement Packs <sup
                                         class="text-danger"><b>*</b></sup></label>
-                                <input type="number" class="form-control number-input"
+                                <input type="number" class="form-control "
                                     name="cement_pack[]"  id="cement_pack"  placeholder="">
 
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="pallet_no${productCount}" class="form-label text-blod">No. of Pallets <sup
+                                <label for="pallet_no${productCount}" class="form-label">No. of Pallets <sup
                                         class="text-danger"><b>*</b></sup></label>
-                                <input type="number" class="form-control number-input"
+                                <input type="number" class="form-control "
                                     name="pallet_no[]"  id="pallet_no${productCount}" onchange="NewCalculateTiles(${productCount})"  placeholder="">
-                                    <input type="hidden" name="sft_ratio[]" value="" id="sft_ratio${productCount}">
+                                    <input type="hidden" value="" id="sft_ratio${productCount}">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="tiles${productCount}" class="form-label text-blod">Tiles / Pallet <sup
+                                <label for="tiles${productCount}" class="form-label">Tiles / Pallet <sup
                                         class="text-danger"><b>*</b></sup></label>
-                                <input type="number" class="form-control number-input "
+                                <input type="number" class="form-control "
                                     name="tiles_pallet[]"  id="tiles${productCount}" onchange="NewCalculateTiles(${productCount})"  placeholder="">
 
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="totla_tiles" class="form-label text-blod">Total Tiles in SFT <sup
+                                <label for="totla_tiles" class="form-label">Total Tiles in SFT <sup
                                         class="text-danger"><b>*</b></sup></label>
-                                <input type="number" id="total_tiles${productCount}" class="form-control number-input non-edit-able "
+                                <input type="number" id="total_tiles${productCount}" class="form-control"
                                     name="totla_tiles[]"  value="0" readonly  id="totla_tiles" placeholder="">
 
                             </div>
                         </div>
                             <div class="col-md-4 d-flex align-items-center">
-                                <button class="btn btn-danger remove-button" type="button" onclick="removeField('field_${productCount}')"><i class="fa-solid fa-xmark"></i></button>
+                                <button class="btn btn-danger" type="button" onclick="removeField('field_${productCount}')"><i class="fa-solid fa-xmark"></i></button>
                             </div>`;
             productCount++;
             productCountElement.value = productCount;
-
             productField.appendChild(newProductRow);
-            var inputElements = document.querySelectorAll(".number-input");
-            inputElements.forEach(function(inputElement) {
-                applyInputBehavior(inputElement);
-            });
-            getLastProductDiv();
         }
-        if (productCount == 0) {
-            window.addEventListener('load', addNewProductSet);
-        }
-        getLastProductDiv();
-
         $(document).on('focus', 'input[name^="plant_name"]', function() {
             const errorTarget = $(this).closest('.input-set').find('.invalid-feedback').data('error-target');
             $(`[data-error-target="${errorTarget}"]`).remove();
         });
 
         function removeField(fieldId) {
-            const productCountElement = document.getElementById('productCount');
-            let productCount = parseInt(productCountElement.value, 10);
             const productField = document.getElementById('productField');
+
             let fieldToRemove = document.getElementById(fieldId);
             productField.removeChild(fieldToRemove);
-            getLastProductDiv();
-            productCountElement.value = productCount - 1;
-
         }
 
         function SelectQuantity(Size) {
@@ -452,5 +544,27 @@
                 }
             });
         }
+        // $(document).ready(function() {
+        //     $('#itemSelect_-1').on('change', function() {
+        //         const idToFetch = $(this).val();
+        //         const url = window.location.origin + '/fetchSize/' + idToFetch;
+        //         $('#showSize_-1').empty();
+        //         $('#showSize_-1').append('<option>Choose Size</option>')
+        //         $.ajax({
+        //             url: url,
+        //             type: 'GET',
+        //             dataType: 'json',
+        //             success: function(response) {
+        //                 $.each(response, function(index, value) {
+        //                     $('#showSize_-1').append('<option value="' + value['id'] +
+        //                         '">' + value['size'] + '</option>');
+        //                 });
+        //             },
+        //             error: function(xhr, status, error) {
+        //                 console.error(error);
+        //             }
+        //         });
+        //     });
+        // });
     </script>
 @endsection

@@ -15,9 +15,6 @@ class Dispatch extends Model
         'area',
         'vehicle_type',
         'vehicle_number',
-        'contactNo1',
-        'contactNo2',
-        'driverName'
     ];
 
     public function products()
@@ -26,6 +23,6 @@ class Dispatch extends Model
     }
     public function customers()
     {
-        return $this->belongsTo(customer::class, 'customer_id', 'id');
+        return $this->belongsTo(customer::class,'customer_id','id');
     }
 }

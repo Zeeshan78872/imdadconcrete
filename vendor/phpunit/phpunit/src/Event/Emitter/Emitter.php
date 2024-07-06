@@ -51,10 +51,6 @@ interface Emitter
 
     public function testRunnerExecutionStarted(TestSuite $testSuite): void;
 
-    public function testRunnerDisabledGarbageCollection(): void;
-
-    public function testRunnerTriggeredGarbageCollection(): void;
-
     public function testSuiteSkipped(TestSuite $testSuite, string $message): void;
 
     public function testSuiteStarted(TestSuite $testSuite): void;
@@ -227,8 +223,6 @@ interface Emitter
     public function testRunnerTriggeredDeprecation(string $message): void;
 
     public function testRunnerTriggeredWarning(string $message): void;
-
-    public function testRunnerEnabledGarbageCollection(): void;
 
     public function testRunnerExecutionAborted(): void;
 

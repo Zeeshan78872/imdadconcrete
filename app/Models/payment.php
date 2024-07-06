@@ -9,8 +9,5 @@ class payment extends Model
 {
     use HasFactory;
 
-    public function customer()
-    {
-        return $this->belongsTo(customer::class, 'customer_id');
-    }
+    
 }

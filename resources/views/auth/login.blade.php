@@ -3,7 +3,7 @@
 
 <head>
     <title>Login - Stock Managemrnt</title>
-    <!--  meta tags -->
+    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -24,10 +24,9 @@
         integrity="sha512-naukR7I+Nk6gp7p5TMA4ycgfxaZBJ7MO5iC3Fp6ySQyKFHOGfpkSZkYVWV5R7u7cfAicxanwYQ5D1e17EfJcMA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
-        .root {
-            --primary: #0f256e;
+        .root{
+            --primary:#0f256e;
         }
-
         .card {
             box-shadow: 0px 4px 30px 0px rgba(15, 37, 110, 0.2);
             border: none;
@@ -44,10 +43,11 @@
 
         }
 
-        .logo-desc {
-            font-size: 14px;
+        .card .logo-desc {
+            font-family: Nunito;
+            font-size: 17px;
             font-weight: 400;
-            line-height: 40px;
+            line-height: 50px;
             letter-spacing: 0em;
             text-align: center;
 
@@ -56,10 +56,11 @@
         .title {
             font-family: Nunito;
             font-size: 18px;
-            font-weight: 700;
+            font-weight: 400;
             line-height: 20px;
             letter-spacing: 0em;
             text-align: center;
+
         }
 
         .title-desc {
@@ -78,24 +79,11 @@
             font-family: Nunito;
         }
 
-        .btn-primary {
-            background-color: rgba(15, 37, 110, 1) !important;
-            border-color: rgba(15, 37, 110, 1) !important;
-            border-radius: 2px !important;
-        }
-
-        .btn-primary:hover {
-            border-color: rgba(15, 37, 110, 1) !important;
-            background-color: #fff !important;
-            color: rgba(15, 37, 110, 1) !important;
-        }
-
         .form-check-input:checked {
             background-color: #0f256e !important;
             border-color: #0d6efd;
         }
-
-        .login-btn {
+        .login-btn{
             background-color: #0f256e;
             color: #ffffff;
             font-family: Nunito;
@@ -107,22 +95,20 @@
 
     <main>
         <section class="vh-100 bg-white">
-            <div class="container  h-100">
+            <div class="container py-5 h-100">
 
                 <div class="row d-flex justify-content-center align-items-center h-100">
                     <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                        <div class="text-center mt-3">
-                            <img src="{{ asset('img/logo.svg') }}" class="img-fluid mt-2" style="width: 60%"
-                                alt="">
-                            <p class="logo-desc">Manufacturer of Tuff Tiles, Concrete Pavers & Curbstones</p>
+                        <div class="text-center mt-5">
+                            <img src="{{asset('img/logo.svg')}}" class="img-fluid mt-2" style="width: 60%" alt="">
+                                        <p class="logo-desc">Manufacturers of Concrete Pavers & Blocks</p>
                         </div>
-                        <div class="card shadow-2-strong bg-white mt-2 mb-3">
+                        <div class="card shadow-2-strong bg-white mt-5" style="margin-bottom: 151px">
                             <div class="card-header bg-white text-center">
 
-                                <div class="text-center">
-                                    <h5 class="title mt-1">Sign In</h5>
-                                    <span class="title-desc mb-2">Please Enter Your Username and Password to
-                                        Login.</span>
+                                <div class="text-center ">
+                                    <h5 class="title mt-4">Sign In</h5>
+                                    <span class="title-desc mb-2">Please Enter Your Username and Password <br> to Login.</span>
                                 </div>
                             </div>
                             <div class="card-body my-2 mx-3">
@@ -141,7 +127,7 @@
 
                                     <input id="username" type="text"
                                         class="form-control  @error('username') is-invalid @enderror" name="username"
-                                        value="{{ old('username') }}">
+                                        value="" required autocomplete="username">
 
                                     @error('username')
                                         <span class="invalid-feedback" role="alert">
@@ -154,21 +140,9 @@
                                     <div class="input-group">
                                         <input id="password" type="password"
                                             class="form-control  @error('password') is-invalid @enderror"
-                                            name="password" value="{{ old('password') }}"
+                                            name="password"
                                             aria-label="Dollar amount (with dot and two decimal places)">
-
-                                        <span id="showpwd" onclick="togglePasswordVisibility()"
-                                            class="input-group-text">
-                                            <span id="closelock" style="display: none;"><i
-                                                    class="fa-solid fa-lock-open"></i></span>
-                                            <span id="openlock">
-                                                <i class="fa-solid fa-lock"></i></span>
-                                        </span>
-                                        @error('password')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
+                                        <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                                     </div>
 
                                     @error('password')
@@ -176,6 +150,8 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
+
+
 
                                     <div class="form-check my-4">
                                         <input class="form-check-input" type="checkbox" name="remember" id="remember"
@@ -188,7 +164,7 @@
 
                                     <div class="row mb-3 mt-2">
                                         <div class="col-md-12 text-center">
-                                            <button type="submit" class="btn btn-primary">
+                                            <button type="submit" class="btn login-btn">
                                                 {{ __('Log In') }}
                                             </button>
 
@@ -210,24 +186,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
         integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
-    </script>
-    <script>
-        var passwordInput = document.getElementById("password");
-        var closelock = document.getElementById("closelock");
-        var openlock = document.getElementById("openlock");
-
-        // Function to toggle between password and text type
-        function togglePasswordVisibility() {
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-                openlock.style.display = 'none';
-                closelock.style.display = 'block';
-            } else {
-                passwordInput.type = "password";
-                openlock.style.display = 'block';
-                closelock.style.display = 'none';
-            }
-        }
     </script>
 </body>
 

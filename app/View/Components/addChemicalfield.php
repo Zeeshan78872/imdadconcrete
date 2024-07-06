@@ -9,14 +9,12 @@ use Illuminate\View\Component;
 class addChemicalfield extends Component
 {
     public $display;
-    public $productTypes;
     /**
      * Create a new component instance.
      */
-    public function __construct($display, $productTypes)
+    public function __construct($display)
     {
         $this->display = $display;
-        $this->productTypes = $productTypes;
     }
 
     /**

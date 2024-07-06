@@ -74,105 +74,117 @@
         </div>
 
         <div class="row my-4">
-            <div class="col-md-3 col-sm-6 my-2">
-                <a href="{{ route('tuffTile.create') }}">
-                    <div class="dashboard-card bg-primary">
-                        <div class="icon-wrapper">
-                            <i class="fa-solid fa-chart-bar"></i>
-                        </div>
-                        <div class="text-content">
-                            Add Tuff Tiles and Block Stock
-                        </div>
+            <div class="col-md-3 col-sm-6 my-1">
+                <div class="dashboard-card"style="background-color: rgba(53, 184, 224, 1);border-radius: 4px;">
+                    <div class="row align-items-center">
+                        <span class="dashboard-icon col-4"><i class="fa-solid fa-chart-bar mx-2"></i></span>
+                        <div class="col-8 text-white">Stock</div>
                     </div>
-                </a>
+                </div>
             </div>
-            <div class="col-md-3 col-sm-6 my-2">
-                <a href="{{ route('chemicalTiles.create') }}">
-                    <div class="dashboard-card bg-primary">
-                        <div class="icon-wrapper">
-                            <i class="fa-solid fa-notes-medical"></i>
-                        </div>
-                        <div class="text-content">
-                            Add Chemical Concrete Pavers Stock
-                        </div>
+            <div class="col-md-3 col-sm-6 my-1">
+                <div class="dashboard-card" style="background-color: rgba(255, 91, 91, 1);border-radius: 4px;">
+                    <div class="row align-items-center">
+                        <span class="dashboard-icon col-4 text-center"><i class="fa-regular fa-square"></i></span>
+                        <div class="col-8 text-white">Dispatch Stock</div>
                     </div>
-                </a>
+                </div>
             </div>
-            <div class="col-md-3 col-sm-6 my-2">
-                <a href="{{ route('DtuffTile.create') }}">
-                    <div class="dashboard-card bg-primary">
-                        <div class="icon-wrapper">
-                            <i class="fa-regular fa-square"></i>
-                        </div>
-                        <div class="text-content">
-                            Dispatch Order (Create Bilti) for Tuff Tiles and Blocks
-                        </div>
+            <div class="col-md-3 col-sm-6 my-1">
+                <div class="dashboard-card " style="background-color: rgba(16, 196, 105, 1);border-radius: 4px;">
+                    <div class="row align-items-center">
+                        <span class="dashboard-icon col-4"><i class="fa-solid fa-users mx-2"></i></span>
+                        <div class="col-8 text-white">Customer</div>
                     </div>
-                </a>
+                </div>
             </div>
-            <div class="col-md-3 col-sm-6 my-2">
-                <a href="{{ route('DchemicalTiles.create') }}">
-                    <div class="dashboard-card bg-primary">
-                        <div class="icon-wrapper">
-                            <i class="fa-solid fa-chart-bar"></i>
-                        </div>
-                        <div class="text-content">
-                            Dispatch Order (Create Bilti) for Chemical Concrete Pavers
-                        </div>
+            <div class="col-md-3 col-sm-6 my-1">
+                <div class="dashboard-card"style="background-color: rgba(224, 135, 53, 1);border-radius: 4px;">
+                    <div class="row align-items-center">
+                        <span class="dashboard-icon col-4"><i class="fa-solid fa-calendar-days mx-2"></i></span>
+                        <div class="col-8 text-white">Current Stock</div>
                     </div>
-                </a>
+                </div>
             </div>
-            <div class="col-md-3 col-sm-6 my-2">
-                <a href="{{ route('payment.create') }}">
-                    <div class="dashboard-card bg-primary">
-                        <div class="icon-wrapper">
-                            <i class="fa-regular fa-clipboard me-1"></i>
-                        </div>
-                        <div class="text-content">
-                            Add a Receive Payment Record
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-3 col-sm-6 my-2">
-                <a href="{{ route('cement.create') }}">
-                    <div class="dashboard-card bg-primary">
-                        <div class="icon-wrapper">
-                            <i class="fa-solid fa-file-circle-plus"></i>
-                        </div>
-                        <div class="text-content">
-                            Add Incoming Cement Stock
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-3 col-sm-6 my-2">
-                <a href="{{ route('gravelSand.create') }}">
-                    <div class="dashboard-card bg-primary">
-                        <div class="icon-wrapper">
-                            <i class="fa-solid fa-file-circle-plus"></i>
-                        </div>
-                        <div class="text-content">
-                            Add Incoming Gravel and Sand Stock
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-3 col-sm-6 my-2">
-                <a href="{{ route('customer.index') }}">
-                    <div class="dashboard-card bg-primary">
-                        <div class="icon-wrapper">
-                            <i class="fa-solid fa-users me-1"></i>
-                        </div>
-                        <div class="text-content">
-                            View Existing Customers
-                        </div>
-                    </div>
-                </a>
-            </div>
-
         </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card stockCard shadow-2-strong bg-white mt-5 py-2 px-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Bar CHart</h5>
+                        <canvas id="barChart" style="max-height: 400px;"></canvas>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", () => {
+                                new Chart(document.querySelector('#barChart'), {
+                                    type: 'bar',
+                                    data: {
+                                        labels: [
+                                            'Red',
+                                            'Blue',
+                                            'Yellow',
+                                            'Red',
+                                            'Blue',
+                                            'Yellow'
+                                        ],
+                                        datasets: [{
+                                            label: 'My First Dataset',
+                                            data: [300, 50, 100, 500, 650, 400],
+                                            backgroundColor: [
+                                                'rgb(255, 99, 132)',
+                                                'rgb(54, 162, 235)',
+                                                'rgb(255, 205, 86)',
+                                                'rgb(255, 99, 132)',
+                                                'rgb(54, 162, 235)',
+                                                'rgb(255, 205, 86)'
+                                            ],
+                                            hoverOffset: 4
+                                        }]
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card stockCard shadow-2-strong bg-white mt-5 py-2 px-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Bar CHart</h5>
+                        <canvas id="pieChart" style="max-height: 400px;"></canvas>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", () => {
+                                new Chart(document.querySelector('#pieChart'), {
+                                    type: 'pie',
+                                    data: {
 
+                                        datasets: [{
+                                            label: 'My First Dataset',
+                                            data: [300, 50, 100, 500, 650, 400],
+                                            backgroundColor: [
+                                                'rgb(255, 99, 132)',
+                                                'rgb(54, 162, 235)',
+                                                'rgb(255, 205, 86)',
+                                                'rgb(255, 99, 132)',
+                                                'rgb(54, 162, 235)',
+                                                'rgb(255, 205, 86)'
+                                            ],
+                                            hoverOffset:3
+                                        }], labels: [
+                                            'Red',
+                                            'Blue',
+                                            'Yellow',
+                                            'Red',
+                                            'Blue',
+                                            'Yellow'
+                                        ],
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
     </div>

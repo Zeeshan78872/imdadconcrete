@@ -22,6 +22,7 @@
                         </p>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-danger">Delete</button>
+
                     </div>
                 </div>
             </form>

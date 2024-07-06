@@ -24,6 +24,7 @@
             background-color: rgba(238, 242, 247, 1);
             font-family: Nunito;
             font-size: 15px;
+            font-weight: 600;
             line-height: 22px;
             letter-spacing: 0em;
             text-align: left;
@@ -47,57 +48,55 @@
 @endsection
 @section('content')
     <div class="container mb-5">
-
-        <div class="row">
-            <div class="col-md-6   top-left-view">
-                <span>{{ $pageName }} - Current Stock</span>
-            </div>
+        <div class="inner-container">
+            <span>Tuff Tiles & Blocks - Current Stock</span>
 
         </div>
-        @if ($category == 'Tuff Tiles')
-            <div class="card stockCard shadow-2-strong bg-white mt-2 ">
-                <div class="card-body p-0">
-                    @component('components.stock-current', [
-                        'selectCurrentStock' => selectCurrentStock($category),
-                    ])
-                    @endcomponent
-                </div>
-            </div>
-        @else
-            @php
-                $overallGrandTotal = 0;
-            @endphp
-            @foreach (getProductType() as $product_type)
-                @php
-                    $array = selectCurrentStock($category, $product_type);
-                    $overallGrandTotal += $array['overallSum'];
-                @endphp
-                @if (!empty($array['currentstocks']))
-                    <div class="card stockCard shadow-2-strong bg-white mt-4">
-                        <div class="card-header bg-white py-2">
-                            <h4 class="page-title">{{ $product_type }}</h4>
-                        </div>
-                        <div class="card-body p-0">
-                            @component('components.stock-current', [
-                                'selectCurrentStock' => selectCurrentStock($category, $product_type),
-                            ])
-                            @endcomponent
-                        </div>
-                    </div>
-                @endif
-            @endforeach
-            <div class="card stockCard shadow-2-strong bg-white mt-5 py-2 px-3">
-                <div class="card-body">
-                    <div class="row justify-content-center">
-                        <div class="col-12 col-md-4 total-text"><span class="text-blod">Grand Total Availabel Stock in
-                                SFT:</span><span>
-                                &nbsp;{{ $overallGrandTotal }}</span></div>
+        <div class="card stockCard shadow-2-strong bg-white ">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="">
+                            <tr>
+                                <th scope="col">Product Name</th>
+                                <th scope="col">Size</th>
+                                <th scope="col">Quantity in SFT - Based on Size</th>
+                                <th scope="col">Total Quantity in SFT </th>
+                            </tr>
+                        </thead class="table table-dark">
+                        <tbody>
+                            {{-- @foreach ($products as $product)
+                                @php
+                                    $count = $product->sizes->count();
+                                    $array = $product->sizes->toArray();
+                                @endphp --}}
+                            <tr>
+                                <td rowspan="2" class="align-middle">Cobol</td>
+                                <td>600</td>
+                                <td>34</td>
+                                <td rowspan="2" class="align-middle">43 </td>
+                            </tr>
+                            {{-- @if ($count > 1)
+                                    @foreach ($product->sizes->slice(1) as $size) --}}
+                            <tr>
+                                <td>12</td>
+                                <td>23</td>
+                            </tr>
+                            {{-- @endforeach
+                                @endif
+                            @endforeach --}}
 
-                    </div>
-
+                        </tbody>
+                        <thead>
+                            <th colspan="3" class="text-end">Total Stock Manufactured in SFT:</th>
+                            <th> 504530510</th>
+                        </thead>
+                    </table>
                 </div>
+
             </div>
-        @endif
+        </div>
+
 
     </div>
 

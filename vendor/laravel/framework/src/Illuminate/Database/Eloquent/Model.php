@@ -1821,7 +1821,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     /**
      * Get the connection resolver instance.
      *
-     * @return \Illuminate\Database\ConnectionResolverInterface|null
+     * @return \Illuminate\Database\ConnectionResolverInterface
      */
     public static function getConnectionResolver()
     {

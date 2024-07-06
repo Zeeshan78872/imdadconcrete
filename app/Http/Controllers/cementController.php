@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\cementDetail;
-use App\Models\stock;
-use App\Models\stockProduct;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -13,62 +12,8 @@ class cementController extends Controller
 
     // current stock cement
     public function curentCement()
-
     {
-        $query = stock::query();
-        $currentDateTime = Carbon::now();
-        $Date = $currentDateTime->format('Y-m-d');
-
-        $cementSummery = $query->with('products')->where('delete', 0)->get();
-
-        $productTotals = [];
-        foreach ($cementSummery as $stock) {
-            $key = $stock->date;
-            foreach ($stock->products as $product) {
-                if (!isset($productTotals[$key])) {
-                    $productTotals[$key] = [
-                        'date'   => $stock->date,
-                        'plant_1' => 0,
-                        'plant_2' => 0,
-                        'plant_3' => 0,
-                        'plant_4' => 0,
-                        'plant_5' => 0,
-                        'plant_6' => 0,
-                        'plant_sum' => 0,
-                        'farma' => 0,
-                        'grand_total' => 0
-                    ];
-                }
-                if ($product->cement_packs != null) {
-                    if ($product->plant_name == 'Plant No. 1 (Fiyaz)') {
-                        $productTotals[$key]['plant_1'] += $product->cement_packs;
-                    }
-                    if ($product->plant_name == 'Plant No. 2 (Saeed)') {
-                        $productTotals[$key]['plant_2'] += $product->cement_packs;
-                    }
-                    if ($product->plant_name == 'Plant No. 3 (Aladita)') {
-                        $productTotals[$key]['plant_3'] += $product->cement_packs;
-                    }
-                    if ($product->plant_name == 'Plant No. 4 (Saeed Bau)') {
-                        $productTotals[$key]['plant_4'] += $product->cement_packs;
-                    }
-                    if ($product->plant_name == 'Plant No. 5 (Zafar)') {
-                        $productTotals[$key]['plant_5'] += $product->cement_packs;
-                    }
-                    if ($product->plant_name == 'Plant No. 6 (Sohail)') {
-                        $productTotals[$key]['plant_6'] += $product->cement_packs;
-                    }
-                    $productTotals[$key]['plant_sum'] += $product->cement_packs;
-                    $productTotals[$key]['grand_total'] += $product->cement_packs;
-                }
-                if ($stock->cement_packs != null) {
-                    $productTotals[$key]['farma'] += $stock->cement_packs;
-                    $productTotals[$key]['grand_total'] += $stock->cement_packs;
-                }
-            }
-        }
-        // dd($productTotals);
-        return view('rawMaterial.Cement.currentStock', compact('productTotals'));
+        return view('rawMaterial.Cement.currentStock');
     }
 
     /**
@@ -97,23 +42,14 @@ class cementController extends Controller
                 $query->where('seller_name',   $filter['seller_name']);
             }
         } else {
-            $startDate = now()->subDays(15)->toDateString(); // Calculate the start date
-            $endDate = now()->toDateString();
-            // dd($endDate);
-            $query->whereBetween('date', [$startDate, $endDate]);
-
-            $startDate = now()->subDays(15)->toDateString(); // Calculate the start date
-            $endDate = now()->toDateString();
-            $query->whereBetween('date', [$startDate, $endDate]);
             $filter = null;
-            $filter['from_date'] = $startDate;
-            $filter['to_date'] = $endDate;
         }
-        $cements = $query->orderBy('id', 'desc')->get();
+        $cements = $query->get();
         $totalQuantity = $cements->sum('quantity');
         $totalPrice = $cements->sum('total_price');;
         // fetch seller_name
-        $SellerNames = sellerName();
+        $SellerNames = cementDetail::select('seller_name')->get();
+        // dd($SellerNames);
         return view('rawMaterial.Cement.index', compact('cements', 'SellerNames', 'filter', 'totalQuantity', 'totalPrice'));
     }
 
@@ -137,13 +73,6 @@ class cementController extends Controller
             'quantity' => 'required',
             'price_pack' => 'required',
             'total_price' => 'required',
-        ], [
-            'date.required' => 'Date is required',
-            'seller_name.required' => 'Seller Name is required',
-            'cement_company.required' => 'Cement Company is required',
-            'quantity.required' => 'Quantity of Cement Packs is required',
-            'price_pack.required' => 'Price for Single Pack is required',
-            'total_price.required' => 'Total Price is required',
         ]);
         $cement =  new  cementDetail();
         $cement->date = $request->date;
@@ -185,13 +114,6 @@ class cementController extends Controller
             'quantity' => 'required',
             'price_pack' => 'required',
             'total_price' => 'required',
-        ], [
-            'date.required' => 'Date is required',
-            'seller_name.required' => 'Seller Name is required',
-            'cement_company.required' => 'Cement Company is required',
-            'quantity.required' => 'Quantity of Cement Packs is required',
-            'price_pack.required' => 'Price for Single Pack is required',
-            'total_price.required' => 'Total Price is required',
         ]);
         $cement =  cementDetail::find($id);
         $cement->date = $request->date;

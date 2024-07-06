@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\productSize;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -15,9 +14,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with(['sizes' => function ($productQuery) {
-            $productQuery->where('delete', 0);
-        }])->where('delete', 0)->orderBy('id', 'desc')->get();
+        $products = Product::all();
+
+
         return view('product.index', compact('products'));
     }
     /**
@@ -54,29 +53,14 @@ class ProductController extends Controller
     {
         $request->validate([
             'category' => ['required'],
-            'name'    => ['required', Rule::unique('products', 'name')->ignore(1, 'delete')],
+            'name'    => ['required'],
             'product_type' => ['required_if:category,Chemical Tiles'],
             'height_type' => ['required_if:category,Chemical Tiles'],
 
-            'size.*'           => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/'],
-            'sft.*'            => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'size.*'        => ['required'],
+            'sft.*'         => ['required'],
             'quantity_farms.*' => ['required_if:category,Chemical Tiles'],
-            'total_Farms.*'    => ['required_if:category,Chemical Tiles'],
-        ], [
-            'category.required' => 'Product  Category is required',
-            'name.required' => 'Product Name is required',
-            'name.unique' => 'Product Name already exists',
-            'product_type.required_if' => 'Product Type is required',
-            'height_type.required_if' => 'Height Type is required',
-
-            'size.*.required' => 'Product Size  is required.',
-            'size.*.numeric' => 'Product Size  is number or float.',
-            'size.*.regex' => 'Product Size  is number or float.',
-            'sft.*.required' => ' Sft  Ratio is required.',
-            'sft.*.numeric' => ' Sft Ratio   is number or float.',
-            'sft.*.regex' => ' Sft Ratio   is number or float',
-            'quantity_farms.*.required_if' => ' Quantity / farms  is required',
-            'total_Farms.*.required_if' => ' Total farms  is required',
+            'total_Farms.*' => ['required_if:category,Chemical Tiles'],
         ]);
         $product = new Product();
         $product->category = $request->category;
@@ -118,20 +102,12 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        $products = Product::with(['sizes' => function ($productQuery) {
-            $productQuery->where('delete', 0);
-        }])->find($id);
+        $products = Product::find($id);
         return view('product.edit', compact('products'));
     }
     /**
      * Update the specified resource in storage.
      */
-    // fetch product name against product type
-    public function fetchproductName($product_type)
-    {
-        $productnames = Product::where('product_type', $product_type)->get();
-        return response()->json($productnames);
-    }
     public function fetchQuantity($id)
     {
         $quantity = productSize::find($id);
@@ -139,58 +115,32 @@ class ProductController extends Controller
     }
     public function fetchSize($id)
     {
-        $sizes = productSize::where('product_id', $id)->where('delete', 0)->get();
+        $sizes = productSize::where('product_id', $id)->get();
         return response()->json($sizes);
     }
 
     public function update(Request $request, string $id)
     {
-        $product_ignore =  Product::find($id);
+
         $rules = [
             'category' => ['required'],
-            'name' => ['required', Rule::unique('products', 'name')->ignore($product_ignore->id),],
+            'name' => ['required'],
             'product_type' => ['required_if:category,Chemical Tiles'],
             'height_type' => ['required_if:category,Chemical Tiles'],
 
-            'newsize.*' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/'],
-            'newsft.*' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'newsize.*' => ['required'],
+            'newsft.*' => ['required'],
             'newquantity_farms.*' => ['required_if:category,Chemical Tiles'],
             'newtotal_Farms.*' => ['required_if:category,Chemical Tiles'],
         ];
-        $customeMessage = [
-            'category.required' => 'Category is required',
-            'name.required' => 'Product Name is required',
-            'name.unique' => 'Product Name already exists',
-            'product_type.required_if' => 'Product Type is required',
-            'height_type.required_if' => 'Height Type is required',
-
-            'size.*.required' => ' size  is required.',
-            'sft.*.required' => ' Sft  Ratio is required.',
-            // 'sft.*.numeric' => ' Sft  ratio is number.',
-            'quantity_farms.*.required_if' => ' Quantity / farms  is required',
-            'total_Farms.*.required_if' => ' Total farms  is required',
-
-            'newsize.*.required' => 'Product Size  is required.',
-            'newsize.*.numeric' => 'Product Size  is number or float.',
-            'newsize.*.regex' => 'Product Size  is number or float.',
-            'newsft.*.required' => ' Sft Ratio   is required.',
-            'newsft.*.numeric' => 'Product Size  is number or float.',
-            'newsft.*.regex' => 'Product Size  is number or float.',
-            'newquantity_farms.*.required_if' => ' Quantity / farms  is required',
-            'newtotal_Farms.*.required_if' => ' Total farms  is required',
-        ];
         foreach ($request->input('size') as $sizeId => $values) {
             foreach ($values as $index => $value) {
-                $rules["size.{$sizeId}.{$index}"] = ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/'];
-                $customeMessage["size.{$sizeId}.{$index}.numeric"] = 'size  Ratio is number.';
-                $customeMessage["size.{$sizeId}.{$index}.regex"] = 'size  Ratio is number or float.';
+                $rules["size.{$sizeId}.{$index}"] = 'required';
             }
         }
         foreach ($request->input('sft') as $sizeId => $values) {
             foreach ($values as $index => $value) {
-                $rules["sft.{$sizeId}.{$index}"] = ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/'];
-                $customeMessage["sft.{$sizeId}.{$index}.numeric"] = 'Sft  Ratio is number or float.';
-                $customeMessage["sft.{$sizeId}.{$index}.regex"] = 'Sft  Ratio is number or float.';
+                $rules["sft.{$sizeId}.{$index}"] = 'required';
             }
         }
         if ($request->category == 'Chemical Tiles') {
@@ -205,14 +155,11 @@ class ProductController extends Controller
                 }
             }
         }
-        // dd($customeMessage);
-        $request->validate($rules, $customeMessage);
+        $request->validate($rules);
         // dd($request);
         foreach ($request->deleteSize as $size_id) {
             if ($size_id != null) {
-                // productSize::find($size_id)->delete();
-                $productSize = productSize::find($size_id);
-                $productSize->update(['delete' => 1]);
+                productSize::find($size_id)->delete();
             }
         }
         $sizes = $request->input('newsize');
@@ -221,22 +168,13 @@ class ProductController extends Controller
         $total_Farms = $request->input('newtotal_Farms');
         if ($sizes != null && $sfts != null) {
             foreach ($sizes as $index => $size) {
-                $data[] = [];
-                if ($request->category == 'Chemical Tiles') {
-                    $data[] = [
-                        'product_id' => $id,
-                        'size' => $size,
-                        'sft' => $sfts[$index],
-                        'quantity_farma' => $quantity_farms[$index],
-                        'total_farma' => $total_Farms[$index],
-                    ];
-                } else {
-                    $data[] = [
-                        'product_id' => $id,
-                        'size' => $size,
-                        'sft' => $sfts[$index],
-                    ];
-                }
+                $data[] = [
+                    'product_id' => $id,
+                    'size' => $size,
+                    'sft' => $sfts[$index],
+                    'quantity_farma' => $quantity_farms[$index],
+                    'total_farma' => $total_Farms[$index],
+                ];
             }
             foreach ($data as $value) {
                 productSize::create($value);
@@ -271,25 +209,12 @@ class ProductController extends Controller
     public function deleteSize($id)
     {
         $record = productSize::findOrFail($id);
-        $record->delete = 1;
-        $record->update();
+        $record->delete();
         return response()->json(['message' => 'Record deleted successfully']);
     }
-    public function softDelete(string $id)
-    {
-        $product =  Product::find($id);
-        $product->delete = 1;
-        $product->update(['delete' => 1]);
-
-        $productSize = productSize::where('product_id', $id);
-        $productSize->update(['delete' => 1]);
-
-        return redirect()->back();
-    }
-
     public function destroy(string $id)
     {
-        $product =  Product::find($id)->delete();
+        Product::find($id)->delete();
         productSize::where('product_id', $id)->delete();
         return redirect()->back();
     }

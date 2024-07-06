@@ -25,16 +25,12 @@ class DispatchProduc extends Model
         'total_price'
     ];
 
-    public function dispatches()
-    {
-        return $this->belongsTo(Dispatch::class, 'dispatch_id');
-    }
     public function mainProduct()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(Product::class,'product_id');
     }
     public function mainSize()
     {
-        return $this->belongsTo(productSize::class, 'size_id');
+        return $this->belongsTo(productSize::class,'size_id');
     }
 }

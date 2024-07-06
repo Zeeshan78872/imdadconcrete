@@ -251,10 +251,6 @@ final class NamePrettifier
 
             if (!is_scalar($value)) {
                 $value = gettype($value);
-
-                if ($value === 'NULL') {
-                    $value = 'null';
-                }
             }
 
             if (is_bool($value) || is_int($value) || is_float($value)) {
@@ -273,10 +269,7 @@ final class NamePrettifier
         }
 
         if ($colorize) {
-            $providedData = array_map(
-                static fn ($value) => Color::colorize('fg-cyan', Color::visualizeWhitespace((string) $value, true)),
-                $providedData,
-            );
+            $providedData = array_map(static fn ($value) => Color::colorize('fg-cyan', Color::visualizeWhitespace((string) $value, true)), $providedData);
         }
 
         return $providedData;

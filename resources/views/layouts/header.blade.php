@@ -139,13 +139,12 @@
                                 <ul class="dropdown-menu dropdown-submenu">
 
                                     <li>
-                                        <a class="dropdown-item" href="{{ route('tuffTile.InOutSummery') }}">Tuff
+                                        <a class="dropdown-item" href="{{ route('DchemicalTiles.create') }}">Tuff
                                             Tiles and Blocks
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item"
-                                            href="{{ route('chemicalTiles.InOutSummery') }}">Chemical
+                                        <a class="dropdown-item" href="{{ route('DchemicalTiles.index') }}">Chemical
                                             Concrete Pavers</a>
                                     </li>
                                 </ul>
@@ -158,13 +157,12 @@
                                 <ul class="dropdown-menu dropdown-submenu">
 
                                     <li>
-                                        <a class="dropdown-item" href="{{ route('currentStock', 'tuffTile') }}">Tuff
+                                        <a class="dropdown-item" href="{{ route('stock.current') }}">Tuff
                                             Tiles and Blocks
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item"
-                                            href="{{ route('currentStock', 'chemicalTiles') }}">Chemical
+                                        <a class="dropdown-item" href="{{ route('DchemicalTiles.index') }}">Chemical
                                             Concrete Pavers</a>
                                     </li>
                                 </ul>
@@ -321,11 +319,11 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-submenu">
                                     <li>
-                                        <a class="dropdown-item" href="{{ route('user.create') }}">Add a Users
+                                        <a class="dropdown-item" href="{{ route('user.add') }}">Add a Users
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="{{ route('user.index') }}">View Registered
+                                        <a class="dropdown-item" href="{{ route('user.view') }}">View Registered
                                             Users</a>
                                     </li>
 

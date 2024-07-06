@@ -12,12 +12,13 @@
             align-items: center;
         }
 
-
+        th {}
 
         .table thead th {
             background-color: rgba(238, 242, 247, 1);
             font-family: Nunito;
             font-size: 15px;
+            font-weight: 600;
             line-height: 22px;
             letter-spacing: 0em;
             text-align: left;
@@ -42,16 +43,10 @@
 @endsection
 @section('content')
     <div class="container mb-5">
-
-        <div class="row">
-            <div class="col-md-8   top-left-view">
-                <span>Dispatched Tuff Tiles & Blocks Record Listings</span>
-            </div>
-            <div class="col-md-4  top-right-view d-flex align-items-center justify-content-end">
-                <a href="{{ route('DtuffTile.create') }}" class="btn btn-primary float-right">Add Dispatch Stock</a>
-            </div>
+        <div class="inner-container">
+            <span>Dispatched Tuff Tiles & Blocks Record Listings</span>
+            <a href="{{ route('DtuffTile.create') }}" class="btn btn-primary float-right">Add Dispatch Stock</a>
         </div>
-
 
 
 
@@ -72,36 +67,44 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="from_date" class="form-label filter-title">From Date</label>
+                                <label for="from_date" class="form-label">From Date</label>
                                 <input type="date" class="form-control" name="from_date"
                                     value="{{ $filter['from_date'] ?? '' }}" id="from_date" placeholder="">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="to_date" class="form-label filter-title">To Date</label>
+                                <label for="to_date" class="form-label">To Date</label>
                                 <input type="date" class="form-control" name="to_date"
                                     value="{{ $filter['to_date'] ?? '' }}" id="to_date" placeholder="">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="customer_id" class="form-label filter-title">Customer Name</label>
-                                <select class="form-select form-select-md" name="customer_id" id="searchableSelect">
+                                <label for="customer_id" class="form-label">Customer Name</label>
+                                <select class="form-select form-select-md" name="customer_id" id="customer_id">
                                     <option value="">Choose Customer Name</option>
-                                    @foreach ($customers as $customer)
-                                        <option {{ ($filter['customer_id'] ?? '') == $customer->id ? 'selected' : '' }}
-                                            value="{{ $customer->id }}">
-                                            {{ $customer->customer_name }}
+                                    @foreach ($Dispatch as $customer)
+                                        <option
+                                            {{ ($filter['customer_id'] ?? '') == $customer->customer_id ? 'selected' : '' }}
+                                            value="{{ $customer->customer_id }}">
+                                            {{ $customer->customers?->customer_name, $filter['customer_id'] ?? '' }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="product_id" class="form-label filter-title">Product Name </label>
+                                <label for="area" class="form-label">City / Area</label>
+
+                                <input type="text" class="form-control" name="area" id="area"
+                                    value="{{ $filter['area'] ?? '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="product_id" class="form-label">Product Name </label>
                                 <select id="itemSelect" class="form-select form-select-md" name="product_id"
                                     id="product_id">
                                     <option value="">Choose Product Name</option>
@@ -115,17 +118,17 @@
 
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="size" class="form-label filter-title">Size </label>
+                                <label for="size" class="form-label">Size </label>
                                 <select id="showSize" class="form-select form-select-md" name="size" id="size">
                                     <option value="">Choose Size</option>
                                 </select>
 
                             </div>
                         </div>
-                        <div class="col-md-9">
+                        <div class="col-md-6">
                             <div class="text-end mt-4">
                                 <a href="{{ route('DtuffTile.index') }}"
-                                    class="btn btn-light text-primary btn-rest mx-3">Reset</a>
+                                    class="btn btn-light text-primary btn-rest">Reset</a>
                                 <button type="submit" class="btn btn-primary">Apply Filter</button>
                             </div>
                         </div>
@@ -142,28 +145,25 @@
                     <table class="table table-bordered" id="">
                         <thead class="">
                             <tr>
-                                <th scope="col" rowspan="2" class="text-blod">B.No.</th>
-                                <th scope="col" rowspan="2" class="text-blod">Date</th>
-                                <th scope="col" rowspan="2" class="text-blod">Customer Name</th>
-                                <th scope="col" rowspan="2" class="text-blod"> Contact No 1</th>
-                                <th scope="col" rowspan="2" class="text-blod"> Contact No 2</th>
-                                <th scope="col" rowspan="2" class="text-blod">Driver Name</th>
-                                <th scope="col" rowspan="2" class="text-blod">City/Area</th>
-                                <th scope="col" rowspan="2" class="text-blod">Product Name</th>
-                                <th scope="col" rowspan="2" class="text-blod">Size</th>
-                                <th scope="col" rowspan="2" class="text-blod">SFT Ratio</th>
-                                <th scope="col" rowspan="2" class="text-blod">Total Tiles</th>
-                                <th scope="col" colspan="2" class="text-blod">Color's Quantity</th>
-                                <th scope="col" rowspan="2" class="text-blod">Tiles in SFT</th>
-                                <th scope="col" rowspan="2" class="text-blod">Price / SFT</th>
-                                <th scope="col" rowspan="2" class="text-blod">Total Price</th>
-                                <th scope="col" rowspan="2" class="text-blod">Vehicle Type</th>
-                                <th scope="col" rowspan="2" class="text-blod">Vehicle No.</th>
-                                <th scope="col" rowspan="2" class="text-blod">Action</th>
+                                <th scope="col" rowspan="2">B.No.</th>
+                                <th scope="col" rowspan="2">Date</th>
+                                <th scope="col" rowspan="2">Customer Name</th>
+                                <th scope="col" rowspan="2">City/Area</th>
+                                <th scope="col" rowspan="2">Product Name</th>
+                                <th scope="col" rowspan="2">Size</th>
+                                <th scope="col" rowspan="2">SFT Ratio</th>
+                                <th scope="col" rowspan="2">Total Tiles</th>
+                                <th scope="col" colspan="2">Color's Quantity</th>
+                                <th scope="col" rowspan="2">Tiles in SFT</th>
+                                <th scope="col" rowspan="2">Price / SFT</th>
+                                <th scope="col" rowspan="2">Total Price</th>
+                                <th scope="col" rowspan="2">Vehicle Type</th>
+                                <th scope="col" rowspan="2">Vehicle No.</th>
+                                <th scope="col" rowspan="2">Action</th>
                             </tr>
                             <tr>
-                                <th class="text-blod">Red</th>
-                                <th class="text-blod">Gray</th>
+                                <th>Red</th>
+                                <th>Gray</th>
                             </tr>
 
                         </thead class="table table-dark">
@@ -176,25 +176,16 @@
                                     <td rowspan="{{ $count }}" class="align-middle">{{ $dispatch->bilti_no }}
                                     </td>
                                     <td rowspan="{{ $count }}" class="align-middle">{{ $dispatch->date }}</td>
-                                    <td class="long-text" rowspan="{{ $count }}" class="align-middle">
+                                    <td rowspan="{{ $count }}" class="align-middle">
                                         {{ $dispatch->customers?->customer_name }}
                                     </td>
-                                    <td class="text-center" rowspan="{{ $count }}">
-                                        {{ $dispatch->contactNo1 == null ? '-' : $dispatch->contactNo1 }}</td>
-                                    <td class="text-center" rowspan="{{ $count }}">
-                                        {{ $dispatch->contactNo2 == null ? '-' : $dispatch->contactNo2 }}</td>
-                                    <td class="text-center" rowspan="{{ $count }}">
-                                        {{ $dispatch->driverName == null ? '-' : $dispatch->driverName }}</td>
-                                    <td class="long-text" rowspan="{{ $count }}" class="align-middle">
-                                        {{ $dispatch->area }}</td>
-                                    <td class="long-text">{{ $dispatch->products?->first()?->mainProduct->name }}</td>
+                                    <td rowspan="{{ $count }}" class="align-middle">{{ $dispatch->area }}</td>
+                                    <td>{{ $dispatch->products?->first()?->mainProduct->name }}</td>
                                     <td>{{ $dispatch->products?->first()?->mainSize->size }}</td>
                                     <td>{{ $dispatch->products?->first()?->sft_ratio }}</td>
                                     <td>{{ $dispatch->products?->first()?->total_tiles }}</td>
-                                    <td>{{ $dispatch->products?->first()?->red_qty == null ? '-' : $dispatch->products?->first()?->red_qty }}
-                                    </td>
-                                    <td>{{ $dispatch->products?->first()?->grey_qty == null ? '-' : $dispatch->products?->first()?->grey_qty }}
-                                    </td>
+                                    <td>{{ $dispatch->products?->first()?->red_qty }}</td>
+                                    <td>{{ $dispatch->products?->first()?->grey_qty }}</td>
                                     <td>{{ $dispatch->products?->first()?->total_tiles_sft }}</td>
                                     <td>{{ $dispatch->products?->first()?->price_sft }}</td>
                                     <td>{{ $dispatch->products?->first()?->total_price }}</td>
@@ -208,36 +199,28 @@
                                         {{-- print Bilti --}}
                                         <a href="" class="btn btn-info btn-sm">Print Bilti</a>
                                         <!-- edit -->
-                                        <a class="btn  btn-sm btn-parrot-green text-white"
-                                            href="{{ route('DtuffTile.edit', $dispatch->id) }}"><i
+                                        <a class="btn  btn-sm btn-parrot-green text-white" href=""><i
                                                 class="fa-solid fa-pencil"></i></a>
                                         <!-- delete -->
-                                        @php
-                                            $model_Id = 'modelDelete' . $dispatch->id;
-                                        @endphp
-
-                                        @component('components.soft-delete-model', [
-                                            'modelId' => $model_Id,
-                                            'Action' => route('DtuffTile.softDelete', $dispatch->id),
-                                        ])
+                                        @component('components.delete-model', ['modelId' => '', 'Action' => route('DtuffTile.destroy', $dispatch->id)])
                                         @endcomponent
 
                                     </td>
                                 </tr>
                                 @if ($count > 1)
                                     @foreach ($dispatch->products->slice(1) as $product)
-                                        <tr>
-                                            <td class="long-text">{{ $product->mainProduct->name }}</td>
-                                            <td>{{ $product->mainSize->size }}</td>
-                                            <td>{{ $product->sft_ratio }}</td>
-                                            <td>{{ $product->total_tiles }}</td>
-                                            <td>{{ $product->red_qty == null ? '-' : $product->red_qty }}</td>
-                                            <td>{{ $product->grey_qty == null ? '-' : $product->grey_qty }}</td>
-                                            <td>{{ $product->total_tiles_sft }}</td>
-                                            <td>{{ $product->price_sft }}</td>
-                                            <td>{{ $product->total_price }}</td>
-                                        </tr>
                                     @endforeach
+                                    <tr>
+                                        <td>{{ $product->mainProduct->name }}</td>
+                                        <td>{{ $product->mainSize->size }}</td>
+                                        <td>{{ $product->sft_ratio }}</td>
+                                        <td>{{ $product->total_tiles }}</td>
+                                        <td>{{ $product->red_qty }}</td>
+                                        <td>{{ $product->grey_qty }}</td>
+                                        <td>{{ $product->total_tiles_sft }}</td>
+                                        <td>{{ $product->price_sft }}</td>
+                                        <td>{{ $product->total_price }}</td>
+                                    </tr>
                                 @endif
                             @endforeach
                         </tbody>
@@ -261,28 +244,22 @@
                         <table class="table table-bordered" id="">
                             <thead class="">
                                 <tr>
-                                    <th scope="col" class="text-blod">Customer Name</th>
-                                    <th scope="col" class="text-blod">Stocked Dispatched</th>
+                                    <th scope="col">Customer Name</th>
+                                    <th scope="col">Stocked Dispatched</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @php
-                                    $grandCustomerTotal = 0;
-                                @endphp
-                                @foreach ($customerSummery as $summery)
+                                @foreach ($CustomerSummery as $summery)
                                     <tr>
                                         <td>{{ $summery['customer_name'] }}</td>
-                                        <td>{{ $summery['total_qty'] }}</td>
+                                        <td>{{ $summery['TotalStocked'] }}</td>
                                     </tr>
-                                    @php
-                                        $grandCustomerTotal += $summery['total_qty'];
-                                    @endphp
                                 @endforeach
                             </tbody>
                             <thead class="">
                                 <tr>
                                     <th scope="col" class="text-end">Grand Total:</th>
-                                    <th scope="col" style="font-weight: 300;">{{ $grandCustomerTotal }}</th>
+                                    <th scope="col">{{ $OverallStock }}</th>
                                 </tr>
                             </thead>
                         </table>
@@ -296,55 +273,35 @@
                         Total Dispatched Stock Summary - Based on Product name & size
                     </div>
                     <div class="table-responsive m-3">
-                        @php
-                            $productTotals = [];
-                            $GrandTotalProduct = 0;
-                        @endphp
-
-                        @foreach ($dispatches as $dispatch)
-                            @foreach ($dispatch->products as $product)
-                                @php
-                                    $key = $product->mainProduct->name . $product->mainSize->size;
-                                @endphp
-
-                                @if (!isset($productTotals[$key]))
-                                    @php
-                                        $productTotals[$key] = [
-                                            'name' => $product->mainProduct->name,
-                                            'size' => $product->mainSize->size,
-                                            'total' => 0,
-                                        ];
-                                    @endphp
-                                @endif
-
-                                @php
-                                    $productTotals[$key]['total'] += $product->total_tiles_sft;
-                                    $GrandTotalProduct += $product->total_tiles_sft;
-                                @endphp
-                            @endforeach
-                        @endforeach
-
                         <table class="table table-bordered" id="">
                             <thead class="">
                                 <tr>
                                     <th scope="col">Product Name</th>
                                     <th scope="col">Size</th>
-                                    <th scope="col">Total Tiles in SFT</th>
+                                    <th scope="col">Total Tiles in SFT </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($productTotals as $key => $productTotal)
-                                    <tr>
-                                        <td>{{ $productTotal['name'] }}</td>
-                                        <td>{{ $productTotal['size'] }}</td>
-                                        <td>{{ $productTotal['total'] }}</td>
-                                    </tr>
+                                @php
+                                    $GrandTotalProduct = 0;
+                                @endphp
+                                @foreach ($dispatches as $dispatch)
+                                    @foreach ($dispatch->products as $product)
+                                        @php
+                                            $GrandTotalProduct += $product->total_tiles_sft;
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $product->mainProduct->name }}</td>
+                                            <td>{{ $product->mainSize->size }}</td>
+                                            <td>{{ $product->total_tiles_sft }}</td>
+                                        </tr>
+                                    @endforeach
                                 @endforeach
                             </tbody>
                             <thead class="">
                                 <tr>
                                     <th scope="col" class="text-end" colspan="2">Grand Total:</th>
-                                    <th scope="col" style="font-weight: 300;">{{ $GrandTotalProduct }}</th>
+                                    <th scope="col">{{ $GrandTotalProduct }}</th>
                                 </tr>
                             </thead>
                         </table>
@@ -355,13 +312,7 @@
     </div>
 @endsection
 @section('script')
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
-
     <script>
-        $('#searchableSelect').select2({});
-
         $(document).ready(function() {
             $('#itemSelect').on('change', function() {
                 const idToFetch = $(this).val();

@@ -129,7 +129,7 @@ class QueryDataTable extends DataTableAbstract
      *
      * @return $this
      */
-    public function prepareQuery(): static
+    protected function prepareQuery(): static
     {
         if (! $this->prepared) {
             $this->totalRecords = $this->totalCount();

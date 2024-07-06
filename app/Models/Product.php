@@ -9,11 +9,10 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'category',
-        'name',
-        'delete'
-    ];
+   protected $fillable = [
+    'category',
+    'name'
+   ];
     public function sizes()
     {
         return $this->hasMany(productSize::class);

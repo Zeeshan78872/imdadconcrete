@@ -39,18 +39,18 @@
                 @endif
                 <form method="POST" action="{{ route('product.store') }}">
                     @csrf
-                    <div class="row justify-content-center">
+                    <div class="row ">
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="productCategory" class="form-label text-blod">Product Category <sup
+                                <label for="productCategory" class="form-label">Product Category <sup
                                         class="text-danger"><b>*</b></sup></label>
                                 <select class="form-select form-select-md @error('category') is-invalid @enderror"
                                     id="productCategory" onchange="toggleproductTypeInput()" name="category">
                                     <option value="">Choose Product category</option>
                                     <option {{ old('category') == 'Tuff Tiles' ? 'selected' : '' }} value="Tuff Tiles">Tuff
-                                        Tiles & Blocks</option>
+                                        Tiles</option>
                                     <option {{ old('category') == 'Chemical Tiles' ? 'selected' : '' }}
-                                        value="Chemical Tiles">Chemical Concrete Pavers
+                                        value="Chemical Tiles">Chemical Tiles
                                     </option>
                                 </select>
                                 @error('category')
@@ -63,7 +63,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="name" class="form-label text-blod">Product Name<sup
+                                <label for="name" class="form-label">Product Name<sup
                                         class="text-danger"><b>*</b></sup></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror"
                                     name="name" value="{{ old('name') }}" id="name" placeholder="">
@@ -74,55 +74,89 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-md-1"></div>
                     </div>
                     @if (old('category') == 'Chemical Tiles')
-                        @component('components.add-chemicalfield', ['display' => 'unset', 'productTypes' => getProductType()])
+                        @component('components.add-chemicalfield', ['display' => 'unset'])
                         @endcomponent
                     @else
-                        @component('components.add-chemicalfield', ['display' => 'none', 'productTypes' => getProductType()])
+                        @component('components.add-chemicalfield', ['display' => 'none'])
                         @endcomponent
                     @endif
 
+                    <div class="row   py-2 mb-2">
+                        <div class="col-md-4 bg-light pt-1">
+                            <div class="mb-3">
+                                <label for="size" class="form-label">Product Size<sup
+                                        class="text-danger"><b>*</b></sup></label>
+                                <input type="number" class="form-control @error('size.0') is-invalid @enderror"
+                                    name="size[]" value="{{ old('size.0') }}" id="size" placeholder="">
+                                @error('size.0')
+                                    <span class="invalid-feedback mt-2" role="alert">
+                                        <strong>The product size field is required.</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4 bg-light pt-1">
+                            <div class="mb-3">
+                                <label for="sft" class="form-label">SFT Ratio<sup
+                                        class="text-danger"><b>*</b></sup></label>
+                                <input type="number" class="form-control @error('sft.0') is-invalid @enderror"
+                                    name="sft[]" value="{{ old('sft.0') }}" id="sft" placeholder="">
+                                @error('sft.0')
+                                    <span class="invalid-feedback mt-2" role="alert">
+                                        <strong>The SFT ratio field is required.</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        @if (old('category') == 'Chemical Tiles')
+                            @component('components.add-product-size', ['display' => 'unset', 'count' => '0'])
+                            @endcomponent
+                        @else
+                            @component('components.add-product-size', ['display' => 'none', 'count' => '0'])
+                            @endcomponent
+                        @endif
 
+                        <div class="col-md-3 bg-light pt-1 pb-1 d-flex align-items-center justify-content-center  pt-2">
+                            <button class="btn btn-primary" type="button" onclick="addField()"><i
+                                    class="fa-solid fa-plus"></i> Add More Size</button>
+                        </div>
+                    </div>
                     <input type="hidden" id="fieldCount" name="fieldCount" value="{{ old('fieldCount', 0) }}">
                     @php
                         $fieldCount = old('fieldCount');
-                        $old = 0;
                     @endphp
                     <div id="SizeField">
-
                         @for ($i = 0; $i < $fieldCount; $i++)
-                            <div class="row justify-content-center  py-2 mb-2 product-div" id="field_{{ $i }}">
+                            @php
+                                $old = $i + 1;
+                            @endphp
+                            <div class="row  py-2 mb-2" id="field_{{ $i }}">
                                 <div class="col-md-4 bg-light pt-1">
                                     <div class="mb-3">
-                                        <label for="size{{ $i }}" class="form-label text-blod">Product Size<sup
+                                        <label for="size" class="form-label">Product Size<sup
                                                 class="text-danger"><b>*</b></sup></label>
-                                        <input type="text"
-                                            class="form-control number-input @error('size.' . $old) is-invalid @enderror"
-                                            name="size[]" value="{{ old('size.' . $old) }}"
-                                            onkeyup="setupnumValid('size{{ $i }}')"
-                                            id="size{{ $i }}" placeholder="">
+                                        <input type="number"
+                                            class="form-control @error('size.' . $old) is-invalid @enderror" name="size[]"
+                                            value="{{ old('size.' . $old) }}" id="size" placeholder="">
                                         @error('size.' . $old)
                                             <span class="invalid-feedback mt-2" role="alert">
-                                                <strong>{{ $message }}</strong>
+                                                <strong>The product size field is required.</strong>
                                             </span>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-4 bg-light pt-1">
                                     <div class="mb-3">
-                                        <label for="sft-1" class="form-label text-blod">SFT Ratio<sup
+                                        <label for="sft" class="form-label">SFT Ratio<sup
                                                 class="text-danger"><b>*</b></sup></label>
-                                        <!-- -->
-                                        <input type="text"
-                                            class="form-control number-input @error('sft.' . $old) is-invalid @enderror"
-                                            name="sft[]" value="{{ old('sft.0') }}" id="sft-1" placeholder=""
-                                            onkeyup="setupnumValid('sft-1')">
-
+                                        <input type="number"
+                                            class="form-control @error('sft.' . $old) is-invalid @enderror" name="sft[]"
+                                            value="{{ old('sft.0') }}" id="sft" placeholder="">
                                         @error('sft.' . $old)
                                             <span class="invalid-feedback mt-2" role="alert">
-                                                <strong>{{ $message }}</strong>
+                                                <strong>The SFT ratio field is required.</strong>
                                             </span>
                                         @enderror
                                     </div>
@@ -137,29 +171,25 @@
                                 @if (old('category') == 'Chemical Tiles')
                                     <div
                                         class="col-md-1 bg-light pt-1 pb-1 d-flex align-items-center justify-content-center compoenet2">
-                                        <button class="btn btn-danger remove-button" type="button"
+                                        <button class="btn btn-danger" type="button"
                                             onclick="removeField('field_{{ $i }}')"><i
                                                 class="fa-solid fa-xmark"></i></button>
                                     </div>
+                                    <div class="col-md-2 bg-light "></div>
                                 @else
                                     <div
                                         class="col-md-1 bg-light pt-1 pb-1 d-flex align-items-center justify-content-center">
-                                        <button class="btn btn-danger remove-button" type="button"
+                                        <button class="btn btn-danger" type="button"
                                             onclick="removeField('field_{{ $i }}')"><i
                                                 class="fa-solid fa-xmark"></i></button>
                                     </div>
                                 @endif
 
                             </div>
-                            @php
-                                $old++;
-                            @endphp
                         @endfor
                     </div>
                     <div class="text-center">
-                        <button class="btn btn-primary" type="button" onclick="addField()"><i class="fa-solid fa-plus"></i>
-                            Add More Size</button>
-                        <button type="reset" class="btn btn-light text-primary btn-rest">Reset</button>
+                        <a href="" class="btn btn-light text-primary btn-rest">Reset</a>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
@@ -169,40 +199,23 @@
 @endsection
 @section('script')
     <script>
-        function setupnumValid(containerId) {
-            const inputContainer = document.getElementById(containerId);
-            inputContainer.addEventListener('input', function(event) {
-                const target = event.target;
-                if (target.tagName === 'INPUT' && target.type === 'text') {
-                    const inputValue = target.value;
-                    const cleanValue = inputValue.replace(/[^0-9.]/g, '');
-                    target.value = cleanValue;
-                }
-            });
-        }
-
-        function getLastProductDiv() {
-            const productDivs = document.querySelectorAll('.product-div');
-            const countDiv = productDivs.length;
-            const firstProductDiv = document.querySelector('.remove-button:first-of-type');
-            if (countDiv == 1) {
-                firstProductDiv.style.display = 'none'
-            } else {
-                firstProductDiv.style.display = 'block'
-            }
-        }
         let fieldCountElement = document.getElementById('fieldCount');
         let fieldCount = parseInt(fieldCountElement.value, 10);
+        console.log(fieldCount);
 
         function toggleproductTypeInput() {
             let productCategory = document.getElementById('productCategory');
+            // let productTypeInput = document.getElementById('productTypeInput');
+            // var component = document.getElementById('compoenet');
+            // var component2 = document.getElementById('compoenet2');
+            // var component1 = document.getElementById('compoenet1');
+
             var components = document.querySelectorAll('.compoenet');
             var components2 = document.querySelectorAll('.compoenet2');
             var components1 = document.querySelectorAll('.compoenet1');
 
             var componentC1 = document.getElementById('compoenetC1');
             var componentC2 = document.getElementById('compoenetC2');
-            var compoenetC3 = document.getElementById('compoenetC3');
 
             if (productCategory.value === 'Chemical Tiles') {
                 productTypeInput.value = '1';
@@ -223,7 +236,6 @@
                 components2.forEach(function(component2) {
                     component2.style.display = 'unset';
                 });
-
             } else {
                 productTypeInput.value = '0';
                 components.forEach(function(component) {
@@ -235,90 +247,70 @@
                 components2.forEach(function(component2) {
                     component2.style.display = 'none';
                 });
-
             }
             if (productCategory.value === 'Chemical Tiles') {
 
                 componentC1.style.display = 'unset';
                 componentC2.style.display = 'unset';
-                compoenetC3.style.display = 'unset';
             } else {
 
                 componentC1.style.display = 'none';
                 componentC2.style.display = 'none';
-                compoenetC3.style.display = 'none';
             }
 
         }
 
         function addField() {
-            let fieldCountElement = document.getElementById('fieldCount');
-            let fieldCount = parseInt(fieldCountElement.value, 10);
             let productTypeInput = document.getElementById('productTypeInput').value;
             console.log(productTypeInput);
             const productField = document.getElementById('SizeField');
 
             // Create a new product row
             const newProductRow = document.createElement('div');
-            newProductRow.classList.add('row', 'py-2', 'mb-2', 'product-div', 'justify-content-center');
+            newProductRow.classList.add('row', 'py-2', 'mb-2');
             newProductRow.setAttribute("id", `field_${fieldCount}`);
             let content = `
                             <div class="col-md-4 bg-light pt-1">
                                 <div class="mb-3">
-                                    <label for="size${fieldCount}" class="form-label text-blod">Product Size<sup
+                                    <label for="size" class="form-label">Product Size<sup
                                             class="text-danger"><b>*</b></sup></label>
-                                    <input type="text" class="form-control number-input" onkeyup="setupnumValid('size${fieldCount}')"  name="size[]" value="" id="size${fieldCount}"
+                                    <input type="number" class="form-control"  name="size[]" value="" id="size"
                                         placeholder="">
                                 </div>
                             </div>
                             <div class="col-md-4 bg-light pt-1">
                                 <div class="mb-3">
-                                    <label for="sft${fieldCount}" class="form-label text-blod">SFT Ratio<sup
+                                    <label for="sft" class="form-label">SFT Ratio<sup
                                             class="text-danger"><b>*</b></sup></label>
-                                    <input type="text" class="form-control number-input" onkeyup="setupnumValid('sft${fieldCount}')"  name="sft[]" value="" id="sft${fieldCount}"
+                                    <input type="number" class="form-control"  name="sft[]" value="" id="sft"
                                         placeholder="">
                                 </div>
-                            </div>
-                            `;
+                            </div>`;
             if (productTypeInput != 0) {
                 content += `
-                <div class="col-md-1  bg-light pt-1 compoenet" style="display:unset;" id=""></div>
-                    <div class="col-md-4 bg-light pt-1 compoenet1" style="display:unset;" id="">
+                <div class="col-md-3 bg-light pt-1 compoenet" id=""></div>
+                    <div class="col-md-4 bg-light pt-1 compoenet1" id="">
                         <div class="mb-3">
-                            <label for="quantity_farms" class="form-label text-blod">Quantity / Farma<sup class="text-danger"><b>*</b></sup></label>
-                            <input type="text" class="form-control number-input"  name="quantity_farms[]" value="" id="quantity_farms" placeholder=""
+                            <label for="quantity_farms" class="form-label">Quantity / Farma<sup class="text-danger"><b>*</b></sup></label>
+                            <input type="number" class="form-control"  name="quantity_farms[]" value="" id="quantity_farms" placeholder=""
                                 >
                         </div>
                     </div>
-                    <div class="col-md-4 bg-light pt-1 compoenet2" style="display:unset;" id="">
+                    <div class="col-md-4 bg-light pt-1 compoenet2" id="">
                         <div class="mb-3">
-                            <label for="total_Farms" class="form-label text-blod">Total Farmas<sup class="text-danger"><b>*</b></sup></label>
-                            <input type="text" class="form-control number-input"  name="total_Farms[]" value="" id="total_Farms" placeholder="">
+                            <label for="total_Farms" class="form-label">Total Farmas<sup class="text-danger"><b>*</b></sup></label>
+                            <input type="number" class="form-control"  name="total_Farms[]" value="" id="total_Farms" placeholder="">
                         </div>
                     </div>
                     <div class="col-md-1 bg-light pt-1 pb-1 d-flex align-items-center justify-content-center compoenet2" >
-                                <button class="btn btn-danger remove-button" type="button" onclick="removeField('field_${fieldCount}')"><i class="fa-solid fa-xmark"></i></button>
+                                <button class="btn btn-danger" type="button" onclick="removeField('field_${fieldCount}')"><i class="fa-solid fa-xmark"></i></button>
                             </div>
-
+                            <div class="col-md-2 bg-light "></div>
 
                     `;
             } else {
-                content += `
-                <div class="col-md-1  bg-light pt-1 compoenet" style="display:none;" id=""></div>
-                    <div class="col-md-4 bg-light pt-1 compoenet1" style="display:none;" id="">
-                        <div class="mb-3">
-                            <label for="quantity_farms" class="form-label text-blod">Quantity / Farma<sup class="text-danger"><b>*</b></sup></label>
-                            <input type="text" class="form-control number-input"  name="quantity_farms[]" value="" id="quantity_farms" placeholder=""
-                                >
-                        </div>
-                    </div>
-                    <div class="col-md-4 bg-light pt-1 compoenet2" style="display:none;" id="">
-                        <div class="mb-3">
-                            <label for="total_Farms" class="form-label text-blod">Total Farmas<sup class="text-danger"><b>*</b></sup></label>
-                            <input type="text" class="form-control number-input"  name="total_Farms[]" value="" id="total_Farms" placeholder="">
-                        </div>
-                    </div> <div class="col-md-1 bg-light pt-1 pb-1 d-flex align-items-center justify-content-center">
-                                <button class="btn btn-danger remove-button" type="button" onclick="removeField('field_${fieldCount}')"><i class="fa-solid fa-xmark"></i></button>
+                content += ` <div class="col-md-1 bg-light pt-1 pb-1 d-flex align-items-center justify-content-center">
+                                <button class="btn btn-danger" type="button" onclick="removeField('field_${fieldCount}')"><i class="fa-solid fa-xmark"></i></button>
                             </div> `;
             }
 
@@ -326,26 +318,13 @@
             productField.appendChild(newProductRow);
             fieldCount++;
             fieldCountElement.value = fieldCount;
-            var inputElements = document.querySelectorAll(".number-input");
-            inputElements.forEach(function(inputElement) {
-                applyInputBehavior(inputElement);
-            });
-            getLastProductDiv();
         }
-        if (fieldCount == 0) {
-            window.addEventListener('load', addField);
-        }
-        getLastProductDiv();
 
         function removeField(fieldId) {
-            let fieldCountElementt = document.getElementById('fieldCount');
-            let fieldCountt = parseInt(fieldCountElementt.value);
             const productField = document.getElementById('SizeField');
 
             let fieldToRemove = document.getElementById(fieldId);
             productField.removeChild(fieldToRemove);
-            getLastProductDiv();
-            fieldCountElementt.value = fieldCountt - 1;
         }
     </script>
 @endsection

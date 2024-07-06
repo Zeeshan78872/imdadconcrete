@@ -13,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Command extends SymfonyCommand
 {
     use Concerns\CallsCommands,
-        Concerns\ConfiguresPrompts,
         Concerns\HasParameters,
         Concerns\InteractsWithIO,
         Concerns\InteractsWithSignals,
@@ -168,13 +167,11 @@ class Command extends SymfonyCommand
      */
     public function run(InputInterface $input, OutputInterface $output): int
     {
-        $this->output = $output instanceof OutputStyle ? $output : $this->laravel->make(
+        $this->output = $this->laravel->make(
             OutputStyle::class, ['input' => $input, 'output' => $output]
         );
 
         $this->components = $this->laravel->make(Factory::class, ['output' => $this->output]);
-
-        $this->configurePrompts($input);
 
         try {
             return parent::run(

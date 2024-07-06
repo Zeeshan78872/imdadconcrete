@@ -8,7 +8,6 @@ use App\Models\payment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
-use App\Models\bank;
 
 class paymentController extends Controller
 {
@@ -18,7 +17,6 @@ class paymentController extends Controller
     public function index(Request $request)
     {
         $query = payment::query();
-        $query->with('customer');
         if ($request->isMethod('POST')) {
             // dd($request);
             $filter = $request->all();
@@ -34,31 +32,25 @@ class paymentController extends Controller
             if ($filter['from_date']  && $filter['to_date']) {
                 $query->whereBetween('date', [$filter['from_date'], $filter['to_date']]);
             }
-            if ($filter['customer_id']) {
-                $query->where('customer_id',   $filter['customer_id']);
+            if ($filter['customer_name']) {
+                $query->where('customer_name',   $filter['customer_name']);
             }
             if ($filter['deposit_bank_name']) {
                 $query->where('deposit_bank_name', $filter['deposit_bank_name']);
             }
-            // if ($filter['amount_reveived']) {
-            //     $query->where('amount_reveived', $filter['amount_reveived']);
-            // }
+            if ($filter['amount_reveived']) {
+                $query->where('amount_reveived', $filter['amount_reveived']);
+            }
         } else {
-            $startDate = now()->subDays(15)->toDateString(); // Calculate the start date
-            $endDate = now()->toDateString();
-            $query->whereBetween('date', [$startDate, $endDate]);
             $filter = null;
-            $filter['from_date'] = $startDate;
-            $filter['to_date'] = $endDate;
         }
-        $payments = $query->orderBy('id', 'desc')
-            ->get();
+        $payments = $query->get();
         // dd($payments);
         // Group the payments by customer_name
-        $paymentCustomer = $payments->groupBy('customer_id')
+        $paymentCustomer = $payments->groupBy('customer_name')
             ->map(function ($group) {
                 return [
-                    'customer_name' => $group->first()->customer->company_name,
+                    'customer_name' => $group->first()->customer_name,
                     'amount_reveived' => $group->sum('amount_reveived')
                 ];
             });
@@ -79,22 +71,11 @@ class paymentController extends Controller
         }
         // dd($TotalPayment);
         // fetch customer
-        $customerNames = customer::select('customer_name', 'id')->get();
-        $DepositBank = bank::select('title_bank_name')->get();
-        // dd($payments);
+        $customerNames = customer::select('customer_name')->get();
+        $DepositBank = getDepositBank();
 
-        return view(
-            'payment.viewPayment',
-            compact(
-                'payments',
-                'customerNames',
-                'paymentCustomer',
-                'paymentBank',
-                'TotalPayment',
-                'filter',
-                'DepositBank'
-            )
-        );
+
+        return view('payment.viewPayment', compact('payments', 'customerNames', 'paymentCustomer', 'paymentBank', 'TotalPayment', 'filter', 'DepositBank'));
     }
 
     /**
@@ -102,8 +83,8 @@ class paymentController extends Controller
      */
     public function create()
     {
-        $DepositBank = bank::select('title_bank_name')->get();
-        $customerNames = customer::all();
+        $DepositBank = getDepositBank();
+        $customerNames = customer::select('customer_name')->get();
         return view('payment.addPayment', compact('customerNames', 'DepositBank'));
     }
 
@@ -112,23 +93,17 @@ class paymentController extends Controller
      */
     public function store(Request $request)
     {
-        $DepositBank = bank::select('title_bank_name')->get();
-        // dd($request);
+        $DepositBank = getDepositBank();
         $validator = $request->validate([
             'date' => 'required',
-            'customer_id' => 'required',
-            'deposit_bank_name' => ['exists:banks,title_bank_name'],
+            'customer_name' => 'exists:customers,customer_name',
+            'deposit_bank_name' => ['required', Rule::in($DepositBank)],
             'amount_reveived' => 'required',
-        ], [
-            'date.required' => 'Date is required',
-            'customer_id.required' => 'Customer name is required',
-            'amount_reveived.required' => 'Amount Received is required',
-            'deposit_bank_name.exists' => 'Deposit Bank name is required'
         ]);
         $payment = new payment();
         $payment->payment_id = $request->payment_id;
         $payment->date = $request->date;
-        $payment->customer_id = $request->customer_id;
+        $payment->customer_name = $request->customer_name;
         $payment->company_name = $request->company_name;
         $payment->deposit_bank_name = $request->deposit_bank_name;
         $payment->amount_reveived = $request->amount_reveived;
@@ -149,8 +124,8 @@ class paymentController extends Controller
      */
     public function edit(string $id)
     {
-        $DepositBank = bank::select('title_bank_name')->get();
-        $customerNames = customer::all();
+        $DepositBank = getDepositBank();
+        $customerNames = customer::select('customer_name')->get();
         $payments = payment::find($id);
         return view('payment.edit', compact('payments', 'customerNames', 'DepositBank'));
     }
@@ -163,19 +138,14 @@ class paymentController extends Controller
         $DepositBank = getDepositBank();
         $validator = $request->validate([
             'date' => 'required',
-            'customer_id' => 'required',
-            'deposit_bank_name' => ['required'],
+            'customer_name' => 'exists:customers,customer_name',
+            'deposit_bank_name' => ['required', Rule::in($DepositBank)],
             'amount_reveived' => 'required',
-        ], [
-            'date.required' => 'Date is required',
-            'customer_id.required' => 'Customer name is required',
-            'amount_reveived.required' => 'Amount Received is required',
-            'deposit_bank_name.in' => 'Deposit Bank name is required'
         ]);
         $payment = payment::find($id);
         $payment->payment_id = $request->payment_id;
         $payment->date = $request->date;
-        $payment->customer_id = $request->customer_id;
+        $payment->customer_name = $request->customer_name;
         $payment->company_name = $request->company_name;
         $payment->deposit_bank_name = $request->deposit_bank_name;
         $payment->amount_reveived = $request->amount_reveived;

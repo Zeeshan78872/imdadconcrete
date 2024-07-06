@@ -17,6 +17,7 @@
             background-color: rgba(238, 242, 247, 1);
             font-family: Nunito;
             font-size: 15px;
+            font-weight: 600;
             line-height: 22px;
             letter-spacing: 0em;
             text-align: left;
@@ -80,11 +81,11 @@
             <div class="card-body">
                 <nav>
                     <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-                        <button class="nav-link text-blod  active" id="nav-customerDetail-tab" data-bs-toggle="tab"
+                        <button class="nav-link  active" id="nav-customerDetail-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-customerDetail" type="button" role="tab" aria-controls="nav-home"
                             aria-selected="true">Tuff Tiles & Blocks</button>
 
-                        <button class="nav-link text-blod" id="nav-dispatchDetail-tab" data-bs-toggle="tab"
+                        <button class="nav-link" id="nav-dispatchDetail-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-dispatchDetail" type="button" role="tab" aria-controls="nav-profile"
                             aria-selected="false">Chemical Concrete Pavers</button>
 
@@ -95,15 +96,14 @@
                     <div class="tab-pane fade show active pt-3" id="nav-customerDetail" role="tabpanel"
                         aria-labelledby="nav-customerDetail-tab">
                         <div class="table-responsive">
-                            <div><span class="float-left m-2"><b>Total
-                                        Products:</b>{{ $products->where('category', 'Tuff Tiles')->count() }}</span></div>
+                             <div><span class="float-left m-2"><b>Total Products:</b>{{$products->where('category', 'Tuff Tiles')->count()}}</span></div>
                             <table class="table table-bordered" id="myTable">
                                 <thead class="">
                                     <tr>
-                                        <th scope="col" class="text-blod">Product Name</th>
-                                        <th scope="col" class="text-blod">Product Size</th>
-                                        <th scope="col" class="text-blod">SFT Ratio</th>
-                                        <th scope="col" class="text-blod">Action</th>
+                                        <th scope="col">Product Name</th>
+                                        <th scope="col">Product Size</th>
+                                        <th scope="col">SFT Ratio</th>
+                                        <th scope="col">Action</th>
                                     </tr>
                                 </thead class="table table-dark">
                                 <tbody>
@@ -124,10 +124,7 @@
                                                         class="fa-solid fa-pencil"></i></a>
                                                 <!--delete Modal  -->
                                                 @php $modeld = 'modelDelete'. $product->id; @endphp
-                                                @component('components.delete-model', [
-                                                    'modelId' => $modeld,
-                                                    'Action' => route('product.softDelete', $product->id),
-                                                ])
+                                                @component('components.delete-model', ['modelId' => $modeld, 'Action' => route('product.destroy', $product->id)])
                                                 @endcomponent
                                                 <!-- Optional: Place to the bottom of scripts -->
                                                 <script>
@@ -153,20 +150,18 @@
                     <div class="tab-pane fade pt-3" id="nav-dispatchDetail" role="tabpanel"
                         aria-labelledby="nav-dispatchDetail-tab">
                         <div class="table-responsive">
-                            <div><span class="float-right m-2"><b>Total
-                                        Products:</b>{{ $products->where('category', 'Chemical Tiles')->count() }}</span>
-                            </div>
+                            <div><span class="float-right m-2"><b>Total Products:</b>{{$products->where('category', 'Chemical Tiles')->count()}}</span></div>
                             <table class="table table-bordered" id="MYTable">
                                 <thead class="">
                                     <tr>
-                                        <th scope="col" class="text-blod">Product Name</th>
-                                        <th scope="col" class="text-blod">Product Type</th>
-                                        <th scope="col" class="text-blod">Height Type</th>
-                                        <th scope="col" class="text-blod">Product Size</th>
-                                        <th scope="col" class="text-blod">SFT Ratio</th>
-                                        <th scope="col" class="text-blod">Quantity / Farma</th>
-                                        <th scope="col" class="text-blod">Total Farmas</th>
-                                        <th scope="col" class="text-blod">Action</th>
+                                        <th scope="col">Product Name</th>
+                                        <th scope="col">Product Type</th>
+                                        <th scope="col">Height Type</th>
+                                        <th scope="col">Product Size</th>
+                                        <th scope="col">SFT Ratio</th>
+                                        <th scope="col">Quantity / Farma</th>
+                                        <th scope="col">Total Farmas</th>
+                                        <th scope="col">Action</th>
                                     </tr>
                                 </thead class="table table-dark">
                                 <tbody>
@@ -176,12 +171,9 @@
                                             $array = $product->sizes->toArray();
                                         @endphp
                                         <tr>
-                                            <td rowspan="{{ $count }}" class="align-middle">{{ $product->name }}
-                                            </td>
-                                            <td rowspan="{{ $count }}" class="align-middle">
-                                                {{ $product->product_type }}</td>
-                                            <td rowspan="{{ $count }}" class="align-middle">
-                                                {{ $product->height_type }}</td>
+                                            <td rowspan="{{ $count }}" class="align-middle">{{ $product->name }}</td>
+                                            <td rowspan="{{ $count }}" class="align-middle">{{ $product->product_type }}</td>
+                                            <td rowspan="{{ $count }}" class="align-middle">{{ $product->height_type }}</td>
                                             <td>{{ $product->sizes?->first()?->size }}</td>
                                             <td>{{ $product->sizes?->first()?->sft }}</td>
                                             <td>{{ $product->sizes?->first()?->quantity_farma }}</td>
@@ -194,10 +186,7 @@
 
                                                 <!--delete Modal  -->
                                                 @php $modeld = 'modelDelete'. $product->id; @endphp
-                                                @component('components.soft-delete-model', [
-                                                    'modelId' => $modeld,
-                                                    'Action' => route('product.softDelete', $product->id),
-                                                ])
+                                                @component('components.delete-model', ['modelId' => $modeld, 'Action' => route('product.destroy', $product->id)])
                                                 @endcomponent
 
                                                 <!-- Optional: Place to the bottom of scripts -->

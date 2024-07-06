@@ -31,10 +31,6 @@ use PHPUnit\Event\Test\PhpDeprecationTriggered;
 use PHPUnit\Event\Test\PhpDeprecationTriggeredSubscriber;
 use PHPUnit\Event\Test\PhpNoticeTriggered;
 use PHPUnit\Event\Test\PhpNoticeTriggeredSubscriber;
-use PHPUnit\Event\Test\PhpunitDeprecationTriggered;
-use PHPUnit\Event\Test\PhpunitDeprecationTriggeredSubscriber;
-use PHPUnit\Event\Test\PhpunitErrorTriggered;
-use PHPUnit\Event\Test\PhpunitErrorTriggeredSubscriber;
 use PHPUnit\Event\Test\PhpunitWarningTriggered;
 use PHPUnit\Event\Test\PhpunitWarningTriggeredSubscriber;
 use PHPUnit\Event\Test\PhpWarningTriggered;
@@ -193,14 +189,6 @@ if (class_exists(Version::class) && (int) Version::series() >= 10) {
                     }
                 },
 
-                new class($printer) extends Subscriber implements PhpunitDeprecationTriggeredSubscriber
-                {
-                    public function notify(PhpunitDeprecationTriggered $event): void
-                    {
-                        $this->printer()->testPhpunitDeprecationTriggered($event);
-                    }
-                },
-
                 new class($printer) extends Subscriber implements PhpNoticeTriggeredSubscriber
                 {
                     public function notify(PhpNoticeTriggered $event): void
@@ -222,14 +210,6 @@ if (class_exists(Version::class) && (int) Version::series() >= 10) {
                     public function notify(PhpunitWarningTriggered $event): void
                     {
                         $this->printer()->testPhpunitWarningTriggered($event);
-                    }
-                },
-
-                new class($printer) extends Subscriber implements PhpunitErrorTriggeredSubscriber
-                {
-                    public function notify(PhpunitErrorTriggered $event): void
-                    {
-                        $this->printer()->testPhpunitErrorTriggered($event);
                     }
                 },
 

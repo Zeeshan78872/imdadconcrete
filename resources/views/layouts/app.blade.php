@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Imdad Concrete</title>
+    <title>{{ config('app.name', 'Laravel') }}</title>
 
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -66,31 +66,25 @@
         #app {
             flex: 1;
         }
-
-        .navbar-toggler {
+        .navbar-toggler{
             color: white !important;
         }
-
-        /* .navbar-nav li {
-            padding-left: 10px;
-            /* Adjust the padding as needed */
-        /* } */
-
+        .navbar-nav li {
+    padding-left: 10px; /* Adjust the padding as needed */
+}
         @media (max-width: 767px) {
             .dropdown-submenu {
                 position: static !important;
                 border: none;
             }
-
             .dropdown-submenu li {
                 /* padding-right:5px ; */
-                /* left: 4%; */
+                left: 4%;
                 top: 0;
                 transform: translateX(0);
             }
         }
-
-        .right-icon {
+        .right-icon{
             font-size: 12px;
         }
     </style>
@@ -122,27 +116,7 @@
     <script src="https://cdn.datatables.net/buttons/2.1.1/js/buttons.print.min.js"></script> --}}
 
     <script>
-        function applyInputBehavior(inputElement) {
-            // Set the default value to 0
-            // inputElement.value = 0;
-            // Add an event listener to handle input changes
-            inputElement.addEventListener("input", function() {
-                // Get the entered value
-                var enteredValue = parseFloat(inputElement.value);
-                // Check if the entered value is less than 0
-                if (isNaN(enteredValue) || enteredValue < 0) {
-                    inputElement.value = ''; // Set the value to 0
-                }
-            });
-        }
-        var inputElements = document.querySelectorAll(".number-input");
-        inputElements.forEach(function(inputElement) {
-            applyInputBehavior(inputElement);
-        });
         $(document).ready(function() {
-
-
-
             $('#myTable').DataTable({
                 dom: 'Bfrtip', // Display buttons, search, and pagination
                 buttons: [
@@ -153,7 +127,17 @@
 
         });
     </script>
+    <script>
+        // new bootnavbar();
+
+        // var dropdownToggleList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'))
+        // dropdownToggleList.forEach(function(dropdownToggle) {
+        //     new bootstrap.Dropdown(dropdownToggle)
+        // });
+    </script>
+
     @yield('script')
+
 </body>
 
 </html>

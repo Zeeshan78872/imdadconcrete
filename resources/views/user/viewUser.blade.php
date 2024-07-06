@@ -3,8 +3,8 @@
 @section('style')
     <style>
         /* .card {
-                                                                                                                    margin-top: 134px !important;
-                                                                                                                } */
+            margin-top: 134px !important;
+        } */
 
         .inner-container {
             display: flex;
@@ -16,6 +16,7 @@
             background-color: rgba(238, 242, 247, 1);
             font-family: Nunito;
             font-size: 15px;
+            font-weight: 600;
             line-height: 22px;
             letter-spacing: 0em;
             text-align: left;
@@ -43,13 +44,12 @@
 @endsection
 @section('content')
     <div class="container mb-5">
-        <div class="row">
-            <div class="col-md-6   top-left-view">
-                <span>Existing System Users on View</span>
-            </div>
-            <div class="col-md-6  top-right-view d-flex align-items-center justify-content-end">
-                <a href="{{ route('user.create') }}" class="btn btn-primary">Add A User</a>
-            </div>
+        <div class="inner-container">
+            <span>User Listing</span>
+            {{-- <span class="float-right">
+                <a href="#" class="a-link">Dashboard</a>
+                <span class="ms-3">User Listing</span>
+            </span> --}}
         </div>
 
 
@@ -57,7 +57,6 @@
         <div class="card stockCard shadow-2-strong bg-white mt-5 py-2 px-3">
             <div class="card-body">
                 <div class="table-responsive">
-
                     <table class="table table-bordered" id="">
                         <thead class="">
                             <tr>
@@ -69,38 +68,30 @@
                             </tr>
                         </thead class="table table-dark">
                         <tbody>
-                            @foreach ($users as $user)
+                            @for ($i = 1; $i < 12; $i++)
                                 <tr>
-                                    <td>{{ $user->user_id }}</td>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->username }}</td>
-                                    <td>{{ $user->role }}
-
-                                    </td>
+                                    <td>ID202</td>
+                                    <td>Zeeshan mushtaq mushtaq mushtaq</td>
+                                    <td>zeeshan123</td>
+                                    <td>Admin</td>
                                     <td> <!-- edit -->
-                                        <a class="btn  btn-sm btn-parrot-green text-white"
-                                            href="{{ route('user.edit', $user->id) }}"><i
+                                        <a class="btn  btn-sm btn-parrot-green text-white" href=""><i
                                                 class="fa-solid fa-pencil"></i></a>
                                         <!--  -->
+                                        <a class="btn  btn-sm btn-warning text-white" href=""><i
+                                                class="fa-solid fa-ban"></i></a>
                                         <!-- delete -->
-                                        @php
-                                            $modelId = 'modelsoft' . $user->id;
-                                        @endphp
-                                        @component('components.soft-delete-model', [
-                                            'modelId' => $modelId,
-                                            'Action' => route('user.softDelete', $user->id),
-                                        ])
+                                        @component('components.delete-model', ['modelId' => '', 'Action' => ''])
                                         @endcomponent
-                                        <form action="{{ route('logout.other') }}" method="post">
-                                            @csrf
-                                            <input type="hidden" name="user_id" value="{{ $user->id }}">
-                                            <button class="btn  btn-sm btn-warning text-white mt-2"
-                                                type="submit">logout</button>
-                                        </form>
 
+                                        <!-- Optional: Place to the bottom of scripts -->
+                                        <script>
+                                            const myModal = new bootstrap.Modal(document.getElementById('modalId'), options)
+                                        </script>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @endfor
+
 
                         </tbody>
                     </table>

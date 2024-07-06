@@ -23,7 +23,7 @@ final class State
     /**
      * The current test case class.
      */
-    public ?string $testCaseName;
+    public string|null $testCaseName;
 
     /**
      * The current test case tests.

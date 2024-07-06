@@ -17,6 +17,7 @@
             background-color: rgba(238, 242, 247, 1);
             font-family: Nunito;
             font-size: 15px;
+            font-weight: 600;
             line-height: 22px;
             letter-spacing: 0em;
             text-align: left;
@@ -41,7 +42,7 @@
 
         .total-text {
             font-family: Nunito;
-            font-weight: 300;
+            font-weight: 500;
             line-height: 30px;
             letter-spacing: 0em;
         }
@@ -56,15 +57,9 @@
 @endsection
 @section('content')
     <div class="container mb-5">
-
-
-        <div class="row">
-            <div class="col-md-6   top-left-view">
-                <span>View All Tuff Tiles</span>
-            </div>
-            <div class="col-md-6  top-right-view d-flex align-items-center justify-content-end">
-                <a href="{{ route('tuffTile.create') }}" class="btn btn-primary float-right">Add Stock</a>
-            </div>
+        <div class="inner-container">
+            <span>View All Tuff Tiles</span>
+            <a href="{{ route('tuffTile.create') }}" class="btn btn-primary float-right">Add Stock</a>
         </div>
 
         <!-------------------- Apply Filter ---------------------->
@@ -84,21 +79,21 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="from_date" class="form-label filter-title">From Date</label>
+                                <label for="from_date" class="form-label">From Date</label>
                                 <input type="date" class="form-control" value="{{ $filter['from_date'] ?? '' }}"
                                     name="from_date" id="from_date" placeholder="">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="to_date" class="form-label filter-title">To Date</label>
+                                <label for="to_date" class="form-label">To Date</label>
                                 <input type="date" class="form-control" name="to_date"
                                     value="{{ $filter['to_date'] ?? '' }}" id="to_date" placeholder="">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="plant_name" class="form-label filter-title">Plant Name</label>
+                                <label for="plant_name" class="form-label">Plant Name</label>
                                 <select class="form-select form-select-md" name="plant_name" id="plant_name">
                                     <option value="">Choose Plant Name</option>
                                     @foreach ($PlantName as $name)
@@ -110,7 +105,8 @@
                         </div>
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="product_id" class="form-label filter-title">Product Name </label>
+                                <label for="product_id" class="form-label">Product Name <sup
+                                        class="text-danger"><b>*</b></sup></label>
                                 <select id="itemSelect" class="form-select form-select-md" name="product_id"
                                     id="product_id">
                                     <option value="">Choose Product Name</option>
@@ -124,24 +120,17 @@
 
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="size" class="form-label filter-title">Size </label>
+                                <label for="size" class="form-label">Size <sup
+                                        class="text-danger"><b>*</b></sup></label>
                                 <select id="showSize" class="form-select form-select-md" name="size" id="size">
                                     <option value="">Choose Size</option>
-                                    @if (isset($filter['product_id']) && $filter['product_id'] != null)
-                                        @foreach ($sizes as $size)
-                                            @if (($filter['product_id'] ?? '') == $size->product_id)
-                                                <option {{ ($filter['size'] ?? '') == $size->id ? 'selected' : '' }}
-                                                    value="{{ $size->id }}">{{ $size->size }}</option>
-                                            @endif
-                                        @endforeach
-                                    @endif
-
                                 </select>
+
                             </div>
                         </div>
                         <div class="col-md-9">
                             <div class="text-end mt-4">
-                                <a href="{{ route('tuffTile.index') }}" class="btn btn-light text-primary btn-rest me-3"
+                                <a href="{{ route('tuffTile.index') }}" class="btn btn-light text-primary btn-rest"
                                     id="resetButton">Reset</a>
                                 <button type="submit" class="btn btn-primary">Apply Filter</button>
                             </div>
@@ -156,25 +145,25 @@
         <div class="card stockCard shadow-2-strong bg-white mt-5 py-2 px-3">
             <div class="card-body">
                 <div class="table-responsive">
-                    <a class="btn-danger btn" href="{{ route('tufftiles.pdf') }}">
+                    <button class="btn-danger btn" onClick="printTable('Table')">
                         Print
-                    </a>
+                    </button>
                     <div class="col-md-3 ms-auto mb-3">
                         <input type="text" name="searchInput" id="searchInput" class="form-control"
                             placeholder="Enter Here to search">
                     </div>
-                    <table class="table table-bordered display" id="dataTable" style="width:100%">
+                    <table class="table table-bordered display" id="Table" style="width:100%">
                         <thead class="">
                             <tr>
-                                <th scope="col text-blod">Date</th>
-                                <th scope="col text-blod">Plant Name</th>
-                                <th scope="col text-blod">Product Name</th>
-                                <th scope="col text-blod">Size</th>
-                                <th scope="col text-blod">Cement Pack</th>
-                                <th scope="col text-blod">No.of Pallets</th>
-                                <th scope="col text-blod">Tiles / Pallet</th>
-                                <th scope="col text-blod">Total Tiles in SFT</th>
-                                <th scope="col text-blod" class="actionHide">Action</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Plant Name</th>
+                                <th scope="col">Product Name</th>
+                                <th scope="col">Size</th>
+                                <th scope="col">Cement Pack</th>
+                                <th scope="col">No.of Pallets</th>
+                                <th scope="col">Tiles / Pallet</th>
+                                <th scope="col">Total Tiles in SFT</th>
+                                <th scope="col" class="actionHide">Action</th>
                             </tr>
                         </thead class="table table-dark">
                         <tbody>
@@ -186,14 +175,15 @@
                                     <td rowspan="{{ $count }}" class="align-middle rowspan-cell">
                                         {{ $stock->date }}
                                     </td>
-                                    <td class="long-text ">{{ $stock->products?->first()?->plant_name }}</td>
-                                    <td class="long-text ">{{ $stock->products?->first()?->mainProduct->name }}</td>
+                                    <td>{{ $stock->products?->first()?->plant_name }}</td>
+                                    <td>{{ $stock->products?->first()?->mainProduct->name }}</td>
                                     <td>{{ $stock->products?->first()?->mainSize->size }}</td>
                                     <td>{{ $stock->products?->first()?->cement_packs }}</td>
                                     <td>{{ $stock->products?->first()?->no_pallets }}</td>
                                     <td>{{ $stock->products?->first()?->tiles_pallets }}</td>
                                     <td>{{ $stock->products?->first()?->total_tiles_sft }}</td>
-                                    <td class="actionHide align-middle rowspan-cell" rowspan="{{ $count }}">
+                                    <td class="actionHide" rowspan="{{ $count }}"
+                                        class="align-middle rowspan-cell">
                                         <!-- edit -->
                                         <a class="btn  btn-sm btn-parrot-green text-white"
                                             href="{{ route('tuffTile.edit', $stock->id) }}"><i
@@ -202,10 +192,7 @@
                                         @php
                                             $modelId = 'modelDelete' . $stock->id;
                                         @endphp
-                                        @component('components.soft-delete-model', [
-                                            'modelId' => $modelId,
-                                            'Action' => route('tuffTile.softDelete', $stock->id),
-                                        ])
+                                        @component('components.delete-model', ['modelId' => $modelId, 'Action' => route('tuffTile.destroy', $stock->id)])
                                         @endcomponent
                                     </td>
                                 </tr>
@@ -237,12 +224,9 @@
         <div class="card stockCard shadow-2-strong bg-white mt-5 py-2 px-3">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-4 total-text "><span><span class="text-blod">Total Cement Packs:
-                            </span>{{ $TotalCement }}</span></div>
-                    <div class="col-4 total-text text-center"><span><span class="text-blod">Total Pallet:</span>
-                            {{ $TotalPallet }}</span></div>
-                    <div class="col-4 total-text text-end"><span><span class="text-blod">Total Products Manufactured in
-                                SFT:</span>
+                    <div class="col-4 total-text "><span>Total Cement Packs: {{ $TotalCement }}</span></div>
+                    <div class="col-4 total-text text-center"><span>Total Pallet: {{ $TotalPallet }}</span></div>
+                    <div class="col-4 total-text text-end"><span>Total Products Manufactured in SFT:
                             {{ $TotalTiles }}</span></div>
                 </div>
             </div>
@@ -257,10 +241,10 @@
                     <table class="table table-bordered" id="">
                         <thead>
                             <tr>
-                                <th scope="col" class="text-blod">Product Name</th>
-                                <th scope="col" class="text-blod">Size</th>
-                                <th scope="col" class="text-blod">Quantity in SFT - Based on Size Variation</th>
-                                <th scope="col" class="text-blod">Total Overall Quantity in SFT </th>
+                                <th scope="col">Product Name</th>
+                                <th scope="col">Size</th>
+                                <th scope="col">Quantity in SFT - Based on Size Variation</th>
+                                <th scope="col">Total Overall Quantity in SFT </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -285,7 +269,7 @@
                                 @if ($count > 1)
                                     @php
                                         $itemsExceptFirst = array_merge($itemsExceptFirst, array_slice($product['products'], 1));
-                                        
+
                                     @endphp
                                     @foreach ($itemsExceptFirst as $value)
                                         @php
@@ -303,9 +287,8 @@
                         </tbody>
                         <thead>
                             <tr>
-                                <th scope="col" class="text-end text-blod" colspan="3">Total Stock Manufactured in
-                                    SFT:</th>
-                                <th scope="col" style="    font-weight: 500;">{{ $TotalOverAll }}</th>
+                                <th scope="col" class="text-end" colspan="3">Total Stock Manufactured in SFT:</th>
+                                <th scope="col">{{ $TotalOverAll }}</th>
                             </tr>
                         </thead>
                     </table>
@@ -315,57 +298,9 @@
         </div>
     </div>
     </div>
-    {{-- <div style="display: none;"> --}}
-    <div id="pdf-content" class="d-none">
-        @include('components.pdf-stock', ['stocks' => $stocks])
-    </div>
-    {{-- </div> --}}
 @endsection
 @section('script')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
     <script>
-        const element = document.getElementById('pdf-content');
-        document.addEventListener('DOMContentLoaded', function() {
-            const generatePdfButton = document.getElementById('pdf-button');
-            generatePdfButton.addEventListener('click', function() {
-
-                const componentContent = document.getElementById('pdf-content').innerHTML;
-                console.log(componentContent);
-
-                const pdfOptions = {
-                    margin: 10,
-                    filename: 'my-document.pdf',
-                    image: {
-                        type: 'jpeg',
-                        quality: 0.98
-                    },
-                    html2canvas: {
-                        scale: 2
-                    },
-                    jsPDF: {
-                        unit: 'mm',
-                        format: 'a4',
-                        orientation: 'portrait'
-                    },
-                };
-                console.log(pdfOptions);
-                html2pdf().from(componentContent).set(pdfOptions).outputPdf();
-            });
-        });
-
-        $(document).ready(function() {
-            $("#searchInput").focus().on("keyup", function() {
-                var value = $(this).val();
-                var trs = $("#dataTable tbody tr:nth-child(n+2)");
-                for (let i = 0; i < trs.length;) {
-                    let grp = $(trs.slice(i, i += trs[i].children[0].rowSpan));
-                    $(grp).toggle(!!$('td:contains(' + value + ')', grp).length);
-                }
-            });
-
-        });
-
         function printTable(id) {
             var printContents = document.getElementById(id).outerHTML;
             var originalContents = document.body.innerHTML;
@@ -374,7 +309,12 @@
             document.body.innerHTML = originalContents;
         }
         $(document).ready(function() {
-
+            $("#searchInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#Table tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
             $('#itemSelect').on('change', function() {
                 const idToFetch = $(this).val();
                 const url = window.location.origin + '/fetchSize/' + idToFetch;

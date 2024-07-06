@@ -21,7 +21,6 @@ use const PHP_URL_PATH;
 use function array_keys;
 use function array_merge;
 use function array_values;
-use function assert;
 use function basename;
 use function chdir;
 use function class_exists;
@@ -62,10 +61,9 @@ use PHPUnit\Framework\Constraint\Exception as ExceptionConstraint;
 use PHPUnit\Framework\Constraint\ExceptionCode;
 use PHPUnit\Framework\Constraint\ExceptionMessageIsOrContains;
 use PHPUnit\Framework\Constraint\ExceptionMessageMatchesRegularExpression;
-use PHPUnit\Framework\MockObject\Generator\Generator as MockGenerator;
+use PHPUnit\Framework\MockObject\Generator as MockGenerator;
 use PHPUnit\Framework\MockObject\MockBuilder;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\MockObject\MockObjectInternal;
 use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount as AnyInvokedCountMatcher;
 use PHPUnit\Framework\MockObject\Rule\InvokedAtLeastCount as InvokedAtLeastCountMatcher;
 use PHPUnit\Framework\MockObject\Rule\InvokedAtLeastOnce as InvokedAtLeastOnceMatcher;
@@ -161,11 +159,12 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
     /**
      * @psalm-var array<string,string>
      */
-    private array $iniSettings = [];
-    private array $locale      = [];
+    private array $iniSettings                  = [];
+    private array $locale                       = [];
+    private ?MockGenerator $mockObjectGenerator = null;
 
     /**
-     * @psalm-var list<MockObjectInternal>
+     * @psalm-var list<MockObject>
      */
     private array $mockObjects                                    = [];
     private bool $registerMockObjectsFromTestArgumentsRecursively = false;
@@ -254,45 +253,30 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
         return new InvokedAtMostCountMatcher($allowedInvocations);
     }
 
-    /**
-     * @deprecated Use <code>$double->willReturn()</code> instead of <code>$double->will($this->returnValue())</code>
-     * @see https://github.com/sebastianbergmann/phpunit/issues/5423
-     */
     final public static function returnValue(mixed $value): ReturnStub
     {
         return new ReturnStub($value);
     }
 
-    /**
-     * @deprecated Use <code>$double->willReturnMap()</code> instead of <code>$double->will($this->returnValueMap())</code>
-     * @see https://github.com/sebastianbergmann/phpunit/issues/5423
-     */
     final public static function returnValueMap(array $valueMap): ReturnValueMapStub
     {
         return new ReturnValueMapStub($valueMap);
     }
 
-    /**
-     * @deprecated Use <code>$double->willReturnArgument()</code> instead of <code>$double->will($this->returnArgument())</code>
-     * @see https://github.com/sebastianbergmann/phpunit/issues/5423
-     */
     final public static function returnArgument(int $argumentIndex): ReturnArgumentStub
     {
         return new ReturnArgumentStub($argumentIndex);
     }
 
-    /**
-     * @deprecated Use <code>$double->willReturnCallback()</code> instead of <code>$double->will($this->returnCallback())</code>
-     * @see https://github.com/sebastianbergmann/phpunit/issues/5423
-     */
     final public static function returnCallback(callable $callback): ReturnCallbackStub
     {
         return new ReturnCallbackStub($callback);
     }
 
     /**
-     * @deprecated Use <code>$double->willReturnSelf()</code> instead of <code>$double->will($this->returnSelf())</code>
-     * @see https://github.com/sebastianbergmann/phpunit/issues/5423
+     * Returns the current object.
+     *
+     * This method is useful when mocking a fluent interface.
      */
     final public static function returnSelf(): ReturnSelfStub
     {
@@ -304,11 +288,6 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
         return new ExceptionStub($exception);
     }
 
-    /**
-     * @deprecated Use <code>$double->willReturn()</code> instead of <code>$double->will($this->onConsecutiveCalls())</code>
-     * @see https://github.com/sebastianbergmann/phpunit/issues/5423
-     * @see https://github.com/sebastianbergmann/phpunit/issues/5425
-     */
     final public static function onConsecutiveCalls(mixed ...$arguments): ConsecutiveCallsStub
     {
         return new ConsecutiveCallsStub($arguments);
@@ -564,7 +543,7 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
             return false;
         }
 
-        if ($this->expectsOutput()) {
+        if ($this->hasExpectationOnOutput()) {
             return false;
         }
 
@@ -594,9 +573,9 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
     /**
      * @internal This method is not covered by the backward compatibility promise for PHPUnit
      */
-    final public function expectsOutput(): bool
+    final public function hasExpectationOnOutput(): bool
     {
-        return $this->hasExpectationOnOutput() || $this->outputRetrievedForAssertion;
+        return is_string($this->outputExpectedString) || is_string($this->outputExpectedRegex) || $this->outputRetrievedForAssertion;
     }
 
     /**
@@ -701,13 +680,7 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
             }
         }
 
-        $outputBufferingStopped = false;
-
-        if (!isset($e) &&
-            $this->hasExpectationOnOutput() &&
-            $this->stopOutputBuffering()) {
-            $outputBufferingStopped = true;
-
+        if ($this->stopOutputBuffering() && !isset($e)) {
             $this->performAssertionsOnOutput();
         }
 
@@ -746,10 +719,6 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
                     Event\Code\ThrowableBuilder::from($exceptionRaisedDuringTearDown),
                 );
             }
-        }
-
-        if (!$outputBufferingStopped) {
-            $this->stopOutputBuffering();
         }
 
         clearstatcache();
@@ -914,8 +883,6 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
      */
     final public function registerMockObject(MockObject $mockObject): void
     {
-        assert($mockObject instanceof MockObjectInternal);
-
         $this->mockObjects[] = $mockObject;
     }
 
@@ -1117,8 +1084,6 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
      * test is run.
      *
      * @throws Exception
-     *
-     * @deprecated https://github.com/sebastianbergmann/phpunit/issues/5214
      */
     protected function iniSet(string $varName, string $newValue): void
     {
@@ -1142,8 +1107,6 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
      * resets the locale to its original value after the test is run.
      *
      * @throws Exception
-     *
-     * @deprecated https://github.com/sebastianbergmann/phpunit/issues/5216
      */
     protected function setLocale(mixed ...$arguments): void
     {
@@ -1175,6 +1138,66 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
     }
 
     /**
+     * Creates a test stub for the specified interface or class.
+     *
+     * @psalm-template RealInstanceType of object
+     *
+     * @psalm-param class-string<RealInstanceType> $originalClassName
+     *
+     * @psalm-return Stub&RealInstanceType
+     *
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     * @throws InvalidArgumentException
+     * @throws NoPreviousThrowableException
+     */
+    protected function createStub(string $originalClassName): Stub
+    {
+        $stub = $this->createTestDouble($originalClassName, false);
+
+        Event\Facade::emitter()->testCreatedStub($originalClassName);
+
+        return $stub;
+    }
+
+    /**
+     * @psalm-param list<class-string> $interfaces
+     *
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    protected function createStubForIntersectionOfInterfaces(array $interfaces): Stub
+    {
+        $stub = $this->mockObjectGenerator()->getMockForInterfaces($interfaces);
+
+        Event\Facade::emitter()->testCreatedStubForIntersectionOfInterfaces($interfaces);
+
+        return $stub;
+    }
+
+    /**
+     * Creates (and configures) a test stub for the specified interface or class.
+     *
+     * @psalm-template RealInstanceType of object
+     *
+     * @psalm-param class-string<RealInstanceType> $originalClassName
+     *
+     * @psalm-return Stub&RealInstanceType
+     *
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     * @throws InvalidArgumentException
+     * @throws NoPreviousThrowableException
+     */
+    final protected function createConfiguredStub(string $originalClassName, array $configuration): Stub
+    {
+        $o = $this->createStub($originalClassName);
+
+        foreach ($configuration as $method => $return) {
+            $o->method($method)->willReturn($return);
+        }
+
+        return $o;
+    }
+
+    /**
      * Creates a mock object for the specified interface or class.
      *
      * @psalm-template RealInstanceType of object
@@ -1189,15 +1212,7 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
      */
     protected function createMock(string $originalClassName): MockObject
     {
-        $mock = (new MockGenerator)->getMock(
-            $originalClassName,
-            callOriginalConstructor: false,
-            callOriginalClone: false,
-            cloneArguments: false,
-            allowMockingUnknownTypes: false,
-        );
-
-        $this->registerMockObject($mock);
+        $mock = $this->createTestDouble($originalClassName);
 
         Event\Facade::emitter()->testCreatedMockObject($originalClassName);
 
@@ -1211,7 +1226,7 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
      */
     protected function createMockForIntersectionOfInterfaces(array $interfaces): MockObject
     {
-        $mock = (new MockGenerator)->getMockForInterfaces($interfaces);
+        $mock = $this->mockObjectGenerator()->getMockForInterfaces($interfaces);
 
         Event\Facade::emitter()->testCreatedMockObjectForIntersectionOfInterfaces($interfaces);
 
@@ -1321,7 +1336,7 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
      */
     protected function getMockForAbstractClass(string $originalClassName, array $arguments = [], string $mockClassName = '', bool $callOriginalConstructor = true, bool $callOriginalClone = true, bool $callAutoload = true, array $mockedMethods = [], bool $cloneArguments = false): MockObject
     {
-        $mockObject = (new MockGenerator)->getMockForAbstractClass(
+        $mockObject = $this->mockObjectGenerator()->getMockForAbstractClass(
             $originalClassName,
             $arguments,
             $mockClassName,
@@ -1361,7 +1376,7 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
 
         if (!class_exists($originalClassName)) {
             eval(
-                (new MockGenerator)->generateClassFromWsdl(
+                $this->mockObjectGenerator()->generateClassFromWsdl(
                     $wsdlFile,
                     $originalClassName,
                     $methods,
@@ -1370,7 +1385,7 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
             );
         }
 
-        $mockObject = (new MockGenerator)->getMock(
+        $mockObject = $this->mockObjectGenerator()->getMock(
             $originalClassName,
             $methods,
             ['', $options],
@@ -1408,7 +1423,7 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
      */
     protected function getMockForTrait(string $traitName, array $arguments = [], string $mockClassName = '', bool $callOriginalConstructor = true, bool $callOriginalClone = true, bool $callAutoload = true, array $mockedMethods = [], bool $cloneArguments = false): MockObject
     {
-        $mockObject = (new MockGenerator)->getMockForTrait(
+        $mockObject = $this->mockObjectGenerator()->getMockForTrait(
             $traitName,
             $arguments,
             $mockClassName,
@@ -1437,7 +1452,7 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
      */
     protected function getObjectForTrait(string $traitName, array $arguments = [], string $traitClassName = '', bool $callOriginalConstructor = true, bool $callOriginalClone = true, bool $callAutoload = true): object
     {
-        return (new MockGenerator)->getObjectForTrait(
+        return $this->mockObjectGenerator()->getObjectForTrait(
             $traitName,
             $traitClassName,
             $callAutoload,
@@ -1611,6 +1626,15 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
         );
 
         $this->status = TestStatus::skipped($message);
+    }
+
+    private function mockObjectGenerator(): MockGenerator
+    {
+        if ($this->mockObjectGenerator === null) {
+            $this->mockObjectGenerator = new MockGenerator;
+        }
+
+        return $this->mockObjectGenerator;
     }
 
     private function startOutputBuffering(): void
@@ -1935,6 +1959,34 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
     }
 
     /**
+     * @psalm-template RealInstanceType of object
+     *
+     * @psalm-param class-string<RealInstanceType> $originalClassName
+     *
+     * @psalm-return MockObject&RealInstanceType
+     *
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     * @throws InvalidArgumentException
+     * @throws NoPreviousThrowableException
+     */
+    private function createTestDouble(string $originalClassName, bool $register = true): MockObject
+    {
+        $testDouble = $this->mockObjectGenerator()->getMock(
+            $originalClassName,
+            callOriginalConstructor: false,
+            callOriginalClone: false,
+            cloneArguments: false,
+            allowMockingUnknownTypes: false,
+        );
+
+        if ($register) {
+            $this->registerMockObject($testDouble);
+        }
+
+        return $testDouble;
+    }
+
+    /**
      * @throws Exception
      * @throws ExpectationFailedException
      * @throws MoreThanOneDataSetFromDataProviderException
@@ -1946,7 +1998,7 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
             if ($this->outputExpectedRegex !== null) {
                 $this->assertMatchesRegularExpression($this->outputExpectedRegex, $this->output);
             } elseif ($this->outputExpectedString !== null) {
-                $this->assertSame($this->outputExpectedString, $this->output);
+                $this->assertEquals($this->outputExpectedString, $this->output);
             }
         } catch (ExpectationFailedException $e) {
             $this->status = TestStatus::failure($e->getMessage());
@@ -2188,79 +2240,5 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
         }
 
         return false;
-    }
-
-    /**
-     * @internal This method is not covered by the backward compatibility promise for PHPUnit
-     */
-    private function hasExpectationOnOutput(): bool
-    {
-        return is_string($this->outputExpectedString) || is_string($this->outputExpectedRegex);
-    }
-
-    /**
-     * Creates a test stub for the specified interface or class.
-     *
-     * @psalm-template RealInstanceType of object
-     *
-     * @psalm-param class-string<RealInstanceType> $originalClassName
-     *
-     * @psalm-return Stub&RealInstanceType
-     *
-     * @throws \PHPUnit\Framework\MockObject\Exception
-     * @throws InvalidArgumentException
-     * @throws NoPreviousThrowableException
-     */
-    protected static function createStub(string $originalClassName): Stub
-    {
-        $stub = (new MockGenerator)->getMock(
-            $originalClassName,
-            callOriginalConstructor: false,
-            callOriginalClone: false,
-            cloneArguments: false,
-            allowMockingUnknownTypes: false,
-        );
-
-        Event\Facade::emitter()->testCreatedStub($originalClassName);
-
-        return $stub;
-    }
-
-    /**
-     * @psalm-param list<class-string> $interfaces
-     *
-     * @throws \PHPUnit\Framework\MockObject\Exception
-     */
-    protected static function createStubForIntersectionOfInterfaces(array $interfaces): Stub
-    {
-        $stub = (new MockGenerator)->getMockForInterfaces($interfaces);
-
-        Event\Facade::emitter()->testCreatedStubForIntersectionOfInterfaces($interfaces);
-
-        return $stub;
-    }
-
-    /**
-     * Creates (and configures) a test stub for the specified interface or class.
-     *
-     * @psalm-template RealInstanceType of object
-     *
-     * @psalm-param class-string<RealInstanceType> $originalClassName
-     *
-     * @psalm-return Stub&RealInstanceType
-     *
-     * @throws \PHPUnit\Framework\MockObject\Exception
-     * @throws InvalidArgumentException
-     * @throws NoPreviousThrowableException
-     */
-    final protected static function createConfiguredStub(string $originalClassName, array $configuration): Stub
-    {
-        $o = self::createStub($originalClassName);
-
-        foreach ($configuration as $method => $return) {
-            $o->method($method)->willReturn($return);
-        }
-
-        return $o;
     }
 }

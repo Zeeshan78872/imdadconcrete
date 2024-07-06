@@ -26,6 +26,7 @@
             background-color: rgba(238, 242, 247, 1);
             font-family: Nunito;
             font-size: 15px;
+            font-weight: 600;
             line-height: 22px;
             letter-spacing: 0em;
             text-align: left;
@@ -55,13 +56,9 @@
 @endsection
 @section('content')
     <div class="container mb-5">
-        <div class="row">
-            <div class="col-md-6   top-left-view">
-                <span>Received Payment Listing</span>
-            </div>
-            <div class="col-md-6  top-right-view d-flex align-items-center justify-content-end">
-                <a href="{{ route('payment.create') }}" class="btn btn-primary">Add A Received Payment Record</a>
-            </div>
+        <div class="inner-container">
+            <span>Payment Listing</span>
+            {{-- <a href="{{ route('payment.create') }}" class="btn btn-primary float-right">Add Payment</a> --}}
         </div>
         {{-- success model  --}}
         @component('components.success-model', [
@@ -89,8 +86,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="from_date" class="form-label filter-title">From Date <sup
-                                        class="text-danger"></label>
+                                <label for="from_date" class="form-label">From Date <sup class="text-danger"></label>
                                 <input type="date" class="form-control " name="from_date"
                                     value="{{ $filter['from_date'] ?? '' }}" id="from_date" placeholder="">
 
@@ -98,8 +94,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="to_date" class="form-label filter-title">From Date <sup
-                                        class="text-danger"></label>
+                                <label for="to_date" class="form-label">From Date <sup class="text-danger"></label>
                                 <input type="date" class="form-control " name="to_date"
                                     value="{{ $filter['to_date'] ?? '' }}" id="to_date" placeholder="">
 
@@ -107,15 +102,15 @@
                         </div>
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="customer_id" class="form-label filter-title">Customer Name</label>
-                                <select class="form-select form-select-md" name="customer_id" id="searchableSelect">
+                                <label for="customer_name" class="form-label">Customer Name</label>
+                                <select class="form-select form-select-md" name="customer_name" id="customer_name">
                                     <option value="">Choose Customer Name</option>
 
                                     @foreach ($customerNames as $name)
                                         @php
-                                            $selected = ($filter['customer_id'] ?? '') == $name->id ? 'selected' : '';
+                                            $selected = ($filter['customer_name'] ?? '') == $name->customer_name ? 'selected' : '';
                                         @endphp
-                                        <option {{ $selected }} value="{{ $name->id }}">
+                                        <option {{ $selected }} value="{{ $name->customer_name }}">
                                             {{ $name->customer_name }}</option>
                                     @endforeach
                                 </select>
@@ -124,29 +119,26 @@
 
                         <div class="col-md-3">
                             <div class="mb-3">
-                                <label for="deposit_bank_name" class="form-label filter-title">Deposit Bank Account</label>
+                                <label for="deposit_bank_name" class="form-label">Deposit Bank Name</label>
                                 <select class="form-select form-select-md" name="deposit_bank_name" id="deposit_bank_name">
-                                    <option value="">Choose Bank Account</option>
-                                    @foreach ($DepositBank as $bank)
-                                        <option
-                                            {{ ($filter['deposit_bank_name'] ?? '') == $bank->title_bank_name ? 'selected' : '' }}
-                                            value="{{ $bank->title_bank_name }}">{{ $bank->title_bank_name }}</option>
+                                    <option value="">Choose Bank Name</option>
+                                    @foreach ($DepositBank as $name)
+                                        <option {{(($filter['deposit_bank_name'] ?? '')== $name)?'selected':'' }} value="{{ $name }}">{{ $name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-                        {{-- <div class="col-md-3">
+                        <div class="col-md-3">
                             <div class="mb-3">
                                 <label for="amount_reveived" class="form-label">Amount Received </label>
                                 <input type="number" class="form-control " name="amount_reveived"
                                     value="{{ $filter['amount_reveived'] ?? '' }}" id="amount_reveived" placeholder="">
 
                             </div>
-                        </div> --}}
-                        <div class="col-md-12">
+                        </div>
+                        <div class="col-md-9">
                             <div class="text-end mt-4 pt-1">
-                                <a href="{{ route('payment.index') }}"
-                                    class="btn btn-light text-primary btn-rest mx-3">Reset</a>
+                                <a href="{{route('payment.index')}}" class="btn btn-light text-primary btn-rest">Reset</a>
                                 <button type="submit" class="btn btn-primary">Apply Filter</button>
                             </div>
                         </div>
@@ -163,13 +155,13 @@
                         <thead class="">
                             <tr>
 
-                                <th scope="col" class="text-blod">Payment ID</th>
-                                <th scope="col" class="text-blod">Date</th>
-                                <th scope="col" class="text-blod">Customer Name</th>
-                                <th scope="col" class="text-blod">Company Name</th>
-                                <th scope="col" class="text-blod">Deposit Bank Name</th>
-                                <th scope="col" class="text-blod">Amount Received</th>
-                                <th scope="col" class="text-blod">Action</th>
+                                <th scope="col">Payment ID</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Customer Name</th>
+                                <th scope="col">Company Name</th>
+                                <th scope="col">Deposit Bank Name</th>
+                                <th scope="col">Amount Received</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -179,8 +171,8 @@
 
                                     <td>{{ $payment->payment_id }}</td>
                                     <td>{{ $payment->date }}</td>
-                                    <td class="long-text">{{ $payment->customer->customer_name }}</td>
-                                    <td class="long-text text-center">{{ $payment->company_name ?? '-' }}</td>
+                                    <td>{{ $payment->customer_name }}</td>
+                                    <td>{{ $payment->company_name }}</td>
                                     <td>{{ $payment->deposit_bank_name }}</td>
                                     <td>{{ $payment->amount_reveived }}</td>
                                     <td>
@@ -213,14 +205,14 @@
             <div class="col-md-6">
                 <div class="card  shadow-2-strong bg-white mt-2 ">
                     <div class="card-header bg-blue text-center text-white">
-                        Final Received Payment Records - Customer Wise
+                        Final Received Payment Records - Customer wise
                     </div>
                     <div class="table-responsive m-3">
                         <table class="table table-bordered" id="myTable">
                             <thead class="">
                                 <tr>
-                                    <th scope="col" class="text-blod">Customer Name</th>
-                                    <th scope="col" class="text-blod">Deposited Amount</th>
+                                    <th scope="col">Customer Name</th>
+                                    <th scope="col">Deposited Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -234,8 +226,8 @@
                             </tbody>
                             <thead class="">
                                 <tr>
-                                    <th scope="col" class="text-end text-blod"><b>Grand Total:</b></th>
-                                    <th scope="col" style="font-weight: 300;">{{ $TotalPayment }}</th>
+                                    <th scope="col" class="text-end">Grand Total:</th>
+                                    <th scope="col">{{ $TotalPayment }}</th>
                                 </tr>
                             </thead>
                         </table>
@@ -246,14 +238,14 @@
             <div class="col-md-6">
                 <div class="card  shadow-2-strong bg-white mt-2 ">
                     <div class="card-header bg-blue text-center text-white">
-                        Final Received Payment Records - Bank Account Wise
+                        Final Received Payment Records - Bank wise
                     </div>
                     <div class="table-responsive m-3">
                         <table class="table table-bordered" id="myTable">
                             <thead class="">
                                 <tr>
-                                    <th scope="col" class="text-blod">Bank Account</th>
-                                    <th scope="col" class="text-blod">Deposited Amount</th>
+                                    <th scope="col">Bank Name</th>
+                                    <th scope="col">Deposited Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -267,8 +259,8 @@
                             </tbody>
                             <thead class="">
                                 <tr>
-                                    <th scope="col" class="text-end text-blod"><b>Grand Total:</b></th>
-                                    <th scope="col" style="font-weight: 300;">{{ $TotalPayment }}</th>
+                                    <th scope="col" class="text-end">Grand Total:</th>
+                                    <th scope="col">{{ $TotalPayment }}</th>
                                 </tr>
                             </thead>
                         </table>
@@ -280,12 +272,7 @@
     </div>
 @endsection
 @section('script')
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
     <script>
-        $('#searchableSelect').select2({});
-
         function toggleRowSelection(selectAllCheckbox) {
             var rowCheckboxes = document.getElementsByClassName('rowCheckbox');
             for (var i = 0; i < rowCheckboxes.length; i++) {

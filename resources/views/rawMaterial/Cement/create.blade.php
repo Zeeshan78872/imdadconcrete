@@ -3,7 +3,7 @@
 @section('style')
     <style>
         .card {
-            margin-top: 95px !important;
+            margin-top: 161px !important;
         }
     </style>
 @endsection
@@ -17,7 +17,7 @@
             <a href="{{ route('cement.index') }}" class="btn btn-primary">View Cement Stock Listings</a>
         @endcomponent
         <div class="row">
-            <div class="col-12 col-md-auto  top-left">
+            <div class="col-6 col-md-auto  top-left">
                 <span>Add Incoming Cement Stock</span>
             </div>
 
@@ -39,7 +39,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-4">
-                                <label for="date" class="form-label text-blod">Date <sup
+                                <label for="date" class="form-label">Date <sup
                                         class="text-danger"><b>*</b></sup></label>
                                 <input type="date" class="form-control @error('date') is-invalid @enderror"
                                     value="{{ date('Y-m-d') }}" name="date" id="date" placeholder="">
@@ -52,7 +52,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-4">
-                                <label for="seller_name" class="form-label text-blod">Seller Name <sup
+                                <label for="seller_name" class="form-label">Seller Name <sup
                                         class="text-danger"><b>*</b></sup></label>
                                 <input type="text" class="form-control @error('seller_name') is-invalid @enderror"
                                     name="seller_name" value="{{ old('seller_name') }}" id="seller_name"
@@ -66,7 +66,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-4">
-                                <label for="cement_company" class="form-label text-blod">Cement Company <sup
+                                <label for="cement_company" class="form-label">Cement Company <sup
                                         class="text-danger"><b>*</b></sup></label>
                                 <input type="text" class="form-control  @error('cement_company') is-invalid @enderror"
                                     name="cement_company" value="{{ old('cement_company') }}" id="cement_company"
@@ -81,10 +81,9 @@
 
                         <div class="col-md-4">
                             <div class="mb-4">
-                                <label for="quantity" class="form-label text-blod">Quantity of cement Packs<sup
+                                <label for="quantity" class="form-label">Quantity of cement Packs<sup
                                         class="text-danger"><b>*</b></sup></label>
-                                <input type="number"
-                                    class="form-control number-input @error('quantity') is-invalid @enderror "
+                                <input type="number" class="form-control @error('quantity') is-invalid @enderror "
                                     name="quantity" value="{{ old('quantity') }}" onchange="CalTotalPrice()" id="quantity"
                                     aria-describedby="helpId" placeholder="">
                                 @error('quantity')
@@ -96,10 +95,9 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-4">
-                                <label for="price_pack" class="form-label text-blod">Price For Single Pack <sup
+                                <label for="price_pack" class="form-label">Price For Single Pack <sup
                                         class="text-danger"><b>*</b></sup></label>
-                                <input type="number"
-                                    class="form-control number-input @error('price_pack') is-invalid @enderror "
+                                <input type="number" class="form-control @error('price_pack') is-invalid @enderror "
                                     name="price_pack" value="{{ old('price_pack', 0) }}" onchange="CalTotalPrice()"
                                     id="price_pack" aria-describedby="helpId" placeholder="">
                                 @error('price_pack')
@@ -111,10 +109,9 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-4">
-                                <label for="total_price" class="form-label text-blod">Total Price <sup
+                                <label for="total_price" class="form-label">Total Price <sup
                                         class="text-danger"><b>*</b></sup></label>
-                                <input type="number"
-                                    class="form-control number-input non-edit-able @error('total_price') is-invalid @enderror"
+                                <input type="text" class="form-control @error('total_price') is-invalid @enderror"
                                     name="total_price" id="total_price" readonly value="{{ old('total_price', 0) }}"
                                     aria-describedby="helpId" placeholder="">
                                 @error('total_price')
@@ -127,7 +124,7 @@
                     </div>
 
                     <div class="text-center mt-3">
-                        <button type="reset" class="btn btn-light text-primary btn-rest mx-3">Reset</button>
+                        <button type="reset" class="btn btn-light text-primary btn-rest">Reset</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
@@ -146,5 +143,23 @@
             let Total_price = parseInt(price_pack.value) * parseInt(quantity.value);
             total_price.value = Total_price;
         }
+
+        function applyInputBehavior(inputElement) {
+            // Set the default value to 0
+            inputElement.value = 0;
+            // Add an event listener to handle input changes
+            inputElement.addEventListener("input", function() {
+                // Get the entered value
+                var enteredValue = parseFloat(inputElement.value);
+                // Check if the entered value is less than 0
+                if (isNaN(enteredValue) || enteredValue < 0) {
+                    inputElement.value = 0; // Set the value to 0
+                }
+            });
+        }
+        var inputElements = document.querySelectorAll(".number-input");
+        inputElements.forEach(function(inputElement) {
+            applyInputBehavior(inputElement);
+        });
     </script>
 @endsection

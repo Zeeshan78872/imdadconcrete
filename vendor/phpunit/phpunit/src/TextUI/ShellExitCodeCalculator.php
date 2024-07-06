@@ -28,37 +28,37 @@ final class ShellExitCodeCalculator
             $returnCode = self::SUCCESS_EXIT;
         }
 
-        if ($failOnEmptyTestSuite && !$result->hasTests()) {
+        if ($failOnEmptyTestSuite && $result->numberOfTests() === 0) {
             $returnCode = self::FAILURE_EXIT;
         }
 
         if ($result->wasSuccessfulIgnoringPhpunitWarnings()) {
-            if ($failOnDeprecation && $result->hasDeprecations()) {
+            if ($failOnDeprecation && ($result->hasTestTriggeredDeprecationEvents() || $result->hasTestTriggeredPhpDeprecationEvents() || $result->hasTestTriggeredPhpunitDeprecationEvents())) {
                 $returnCode = self::FAILURE_EXIT;
             }
 
-            if ($failOnIncomplete && $result->hasIncompleteTests()) {
+            if ($failOnIncomplete && $result->hasTestMarkedIncompleteEvents()) {
                 $returnCode = self::FAILURE_EXIT;
             }
 
-            if ($failOnNotice && $result->hasNotices()) {
+            if ($failOnNotice && ($result->hasTestTriggeredNoticeEvents() || $result->hasTestTriggeredPhpNoticeEvents())) {
                 $returnCode = self::FAILURE_EXIT;
             }
 
-            if ($failOnRisky && $result->hasRiskyTests()) {
+            if ($failOnRisky && $result->hasTestConsideredRiskyEvents()) {
                 $returnCode = self::FAILURE_EXIT;
             }
 
-            if ($failOnSkipped && $result->hasSkippedTests()) {
+            if ($failOnSkipped && $result->hasTestSkippedEvents()) {
                 $returnCode = self::FAILURE_EXIT;
             }
 
-            if ($failOnWarning && $result->hasWarnings()) {
+            if ($failOnWarning && $result->hasWarningEvents()) {
                 $returnCode = self::FAILURE_EXIT;
             }
         }
 
-        if ($result->hasErrors()) {
+        if ($result->hasTestErroredEvents() || $result->hasTestTriggeredPhpunitErrorEvents()) {
             $returnCode = self::EXCEPTION_EXIT;
         }
 

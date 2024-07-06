@@ -25,21 +25,22 @@
                         {{ session('error') }}
                     </div>
                 @endif
-                <form method="POST" action="{{ route('customer.update', $customer->id) }}">
+                <form method="POST" action="{{ route('customer.update',$customer->id) }}">
                     @csrf
                     @method('PUT')
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="customer_id" class="form-label text-blod">Customer ID <sup
+                                <label for="customer_id" class="form-label">Customer ID <sup
                                         class="text-danger"><b>*</b></sup></label>
-                                <input type="text" class="form-control non-edit-able" name="customer_id" readonly
-                                    value="{{ $customer->customer_id }}" id="customer_id" placeholder="">
+                                <input type="text" class="form-control" name="customer_id" readonly
+                                    value="{{$customer->customer_id}}" id="customer_id"
+                                    placeholder="">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="customer_name" class="form-label text-blod">Customer Name <sup
+                                <label for="customer_name" class="form-label">Customer Name <sup
                                         class="text-danger"><b>*</b></sup></label>
                                 <input type="text" class="form-control @error('customer_name') is-invalid @enderror"
                                     name="customer_name" id="customer_name" value="{{ $customer->customer_name }}"
@@ -53,11 +54,10 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="company_name" class="form-label text-blod">Company Name <sup
+                                <label for="company_name" class="form-label">Company Name <sup
                                         class="text-danger"><b>*</b></sup></label>
                                 <input type="text" class="form-control @error('company_name') is-invalid @enderror"
-                                    name="company_name" id="company_name" value="{{ $customer->company_name }}"
-                                    placeholder="">
+                                    name="company_name" id="company_name" value="{{ $customer->company_name }}" placeholder="">
                                 @error('company_name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -67,7 +67,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="city_area" class="form-label text-blod">City / Area <sup
+                                <label for="city_area" class="form-label">City / Area <sup
                                         class="text-danger"><b>*</b></sup></label>
                                 <input type="text" class="form-control @error('city_area') is-invalid @enderror"
                                     name="city_area" id="city_area" value="{{ $customer->city_area }}" placeholder="">
@@ -80,7 +80,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="phone_number_1" class="form-label text-blod">Phone Number 1 <sup
+                                <label for="phone_number_1" class="form-label">Phone Number 1 <sup
                                         class="text-danger"><b>*</b></sup></label>
                                 <input type="text" class="form-control @error('phone_number_1') is-invalid @enderror"
                                     name="phone_number_1" id="phone_number_1" value="{{ $customer->phone_number_1 }}"
@@ -95,7 +95,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="phone_number_2" class="form-label text-blod">Phone Number 2 (optional)</label>
+                                <label for="phone_number_2" class="form-label">Phone Number 2 (optional)</label>
                                 <input type="text" class="form-control" name="phone_number_2" id="phone_number_2"
                                     value="{{ $customer->phone_number_2 }}" placeholder="">
 
@@ -103,7 +103,7 @@
                         </div>
                     </div>
                     <div class="text-center">
-                        <button type="button" class="btn btn-light text-primary btn-rest mx-3">Reset</button>
+                        <button type="button" class="btn btn-light text-primary btn-rest">Reset</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </form>

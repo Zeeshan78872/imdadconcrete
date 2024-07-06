@@ -39,35 +39,15 @@ class sandController extends Controller
                 $query->where('seller_name',   $filter['seller_name']);
             }
         } else {
-            $startDate = now()->subDays(7)->toDateString(); // Calculate the start date
-            $endDate = now()->toDateString();
-            $query->whereBetween('date', [$startDate, $endDate]);
             $filter = null;
-            $filter['from_date'] = $startDate;
-            $filter['to_date'] = $endDate;
         }
         $gravleSands = $query->get();
-        $summery = $query->select('material_type')
-            ->selectRaw('COUNT(vehicle_no) as total_vehicles')
-            ->selectRaw('SUM(total_measeurement) as total_quantity')
-            ->whereNotNull('vehicle_no')
-            ->groupBy('material_type')
-            ->get();
-        // dd($summery);
         $sellerNames = getSellerNames();
         $materialTypes = getMaterialTypes();
 
-        return view(
-            'rawMaterial.gravelSand.index',
-            compact(
-                'gravleSands',
-                'filter',
-                'sellerNames',
-                'materialTypes',
-                'summery'
-            )
-        );
+        return view('rawMaterial.gravelSand.index', compact('gravleSands',  'filter'));
     }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -86,30 +66,17 @@ class sandController extends Controller
         $sellerNames = getSellerNames();
         $materialTypes = getMaterialTypes();
         // dd($materialTypes);
-        $request->validate(
-            [
-                'date' => 'required',
-                'vehicle_no' => 'required|max:255',
-                'bilti_no' => 'required|max:255',
-                'material_type' => [Rule::in($materialTypes)],
-                'length' => 'required',
-                'width' => 'required',
-                'height' => 'required',
-                'seller_name' => [Rule::in($sellerNames)],
-                'total_measeurement' => 'required',
-            ],
-            [
-                'date.required' => 'Date is required',
-                'vehicle_no.required' => 'Vehicle No is required',
-                'bilti_no.required' => 'Bilti No is required',
-                'material_type.in' => 'Material Type is required',
-                'length.required' => 'Length in Sft is required',
-                'width.required' => 'Width in Sft is required',
-                'height.required' => 'Height in Sft is required',
-                'seller_name.in' => 'Seller is required',
-                'total_measeurement.required' => 'Total Measeurement is required',
-            ]
-        );
+        $request->validate([
+            'date' => 'required',
+            'vehicle_no' => 'required|max:255',
+            'bilti_no' => 'required|max:255',
+            'material_type' => ['required', Rule::in($materialTypes)],
+            'length' => 'required',
+            'width' => 'required',
+            'height' => 'required',
+            'seller_name' => ['required',Rule::in($sellerNames)],
+            'total_measeurement' => 'required',
+        ]);
 
         $gravelSand = new gravelSand();
         $gravelSand->date = $request->date;
@@ -150,30 +117,17 @@ class sandController extends Controller
     {
         $sellerNames = getSellerNames();
         $materialTypes = getMaterialTypes();
-        $request->validate(
-            [
-                'date' => 'required',
-                'vehicle_no' => 'required|max:255',
-                'bilti_no' => 'required|max:255',
-                'material_type' => [Rule::in($materialTypes)],
-                'length' => 'required',
-                'width' => 'required',
-                'height' => 'required',
-                'seller_name' => [Rule::in($sellerNames)],
-                'total_measeurement' => 'required',
-            ],
-            [
-                'date.required' => 'Date is required',
-                'vehicle_no.required' => 'Vehicle No is required',
-                'bilti_no.required' => 'Bilti No is required',
-                'material_type.in' => 'Material Type is required',
-                'length.required' => 'Length in SFT is required',
-                'width.required' => 'Width in SFT is required',
-                'height.required' => 'Height in SFT is required',
-                'seller_name.in' => 'Seller Name is required',
-                'total_measeurement.required' => 'Total Measeurement is required',
-            ]
-        );
+        $request->validate([
+            'date' => 'required',
+            'vehicle_no' => 'required|max:255',
+            'bilti_no' => 'required|max:255',
+            'material_type' => ['required', Rule::in($materialTypes)],
+            'length' => 'required',
+            'width' => 'required',
+            'height' => 'required',
+            'seller_name' => ['required', Rule::in($sellerNames)],
+            'total_measeurement' => 'required',
+        ]);
 
         $gravelSand =  gravelSand::find($id);
         $gravelSand->date = $request->date;
@@ -188,6 +142,7 @@ class sandController extends Controller
         $gravelSand->update();
         return redirect()->route('gravelSand.index');
     }
+
     /**
      * Remove the specified resource from storage.
      */

@@ -7,7 +7,6 @@ use App\Models\bank;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Carbon;
-use App\Rules\validateAccountTitleBank;
 
 class bankController extends Controller
 {
@@ -32,9 +31,8 @@ class bankController extends Controller
         }
         $banks = $query->get();
         $AccountCategory = getAccountCategory();
-        $insideCount = bank::where('account_category', 'Inside-Business')->count();
-        $outsiderCount = bank::where('account_category', "Outsiders's Bank")->count();
-        return view('banks.index', compact('banks',  'filter', 'AccountCategory', 'insideCount', 'outsiderCount'));
+
+        return view('banks.index', compact('banks',  'filter', 'AccountCategory'));
     }
 
     /**
@@ -53,21 +51,12 @@ class bankController extends Controller
     public function store(Request $request)
     {
         $AccountCategory = getAccountCategory();
-        $request->validate(
-            [
-                'account_category' => [Rule::in($AccountCategory)],
-                'title_bank_name' => ['unique:banks', new validateAccountTitleBank],
-                'account_number' => ['required', 'unique:banks'],
-                'account_owner' => ['required']
-            ],
-            [
-                'account_category.in' => 'Account Category is required',
-                'title_bank_name.unique' => 'Account Title Bank Name must unique',
-                'account_number.required' => 'Account Number is required',
-                'account_number.unique' => 'Account Number must unique',
-                'account_owner.required' => 'Account Owner is required'
-            ]
-        );
+        $request->validate([
+            'account_category' => ['required', Rule::in($AccountCategory)],
+            'title_bank_name' => ['required'],
+            'account_number' => ['required'],
+            'account_owner' => ['required']
+        ]);
         $bank = new bank();
         $bank->account_category = $request->account_category;
         $bank->title_bank_name = $request->title_bank_name;
@@ -105,21 +94,12 @@ class bankController extends Controller
     public function update(Request $request, string $id)
     {
         $AccountCategory = getAccountCategory();
-        $request->validate(
-            [
-                'account_category' => [Rule::in($AccountCategory)],
-                'title_bank_name' => ['unique:banks', new validateAccountTitleBank],
-                'account_number' => ['required', 'unique:banks'],
-                'account_owner' => ['required']
-            ],
-            [
-                'account_category.in' => 'Account Category is required',
-                'title_bank_name.unique' => 'Account Title bank name must unique',
-                'account_number.required' => 'Account Number is required',
-                'account_number.unique' => 'Account Number must unique',
-                'account_owner.required' => 'Account Owner is required'
-            ]
-        );
+        $request->validate([
+            'account_category' => ['required', Rule::in($AccountCategory)],
+            'title_bank_name' => ['required'],
+            'account_number' => ['required'],
+            'account_owner' => ['required']
+        ]);
         $bank = bank::find($id);
         $bank->account_category = $request->account_category;
         $bank->title_bank_name = $request->title_bank_name;

@@ -529,14 +529,4 @@ final class MetadataCollection implements Countable, IteratorAggregate
             ),
         );
     }
-
-    public function isWithoutErrorHandler(): self
-    {
-        return new self(
-            ...array_filter(
-                $this->metadata,
-                static fn (Metadata $metadata): bool => $metadata->isWithoutErrorHandler(),
-            ),
-        );
-    }
 }

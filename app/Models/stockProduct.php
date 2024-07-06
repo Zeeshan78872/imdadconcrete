@@ -13,7 +13,6 @@ class stockProduct extends Model
         'stock_id',
         'product_id',
         'size_id',
-        'product_type',
         'plant_name',
         'cement_packs',
         'no_pallets',
@@ -24,10 +23,10 @@ class stockProduct extends Model
     ];
     public function mainProduct()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(Product::class,'product_id');
     }
     public function mainSize()
     {
-        return $this->belongsTo(productSize::class, 'size_id');
+        return $this->belongsTo(productSize::class,'size_id');
     }
 }

@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
-use Symfony\Component\HttpFoundation\InputBag;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -31,7 +31,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     /**
      * The decoded JSON content for the request.
      *
-     * @var \Symfony\Component\HttpFoundation\InputBag|null
+     * @var \Symfony\Component\HttpFoundation\ParameterBag|null
      */
     protected $json;
 
@@ -398,12 +398,12 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
      *
      * @param  string|null  $key
      * @param  mixed  $default
-     * @return \Symfony\Component\HttpFoundation\InputBag|mixed
+     * @return \Symfony\Component\HttpFoundation\ParameterBag|mixed
      */
     public function json($key = null, $default = null)
     {
         if (! isset($this->json)) {
-            $this->json = new InputBag((array) json_decode($this->getContent(), true));
+            $this->json = new ParameterBag((array) json_decode($this->getContent(), true));
         }
 
         if (is_null($key)) {
@@ -416,7 +416,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     /**
      * Get the input source for the request.
      *
-     * @return \Symfony\Component\HttpFoundation\InputBag
+     * @return \Symfony\Component\HttpFoundation\ParameterBag
      */
     protected function getInputSource()
     {
@@ -646,7 +646,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     /**
      * Set the JSON payload for the request.
      *
-     * @param  \Symfony\Component\HttpFoundation\InputBag  $json
+     * @param  \Symfony\Component\HttpFoundation\ParameterBag  $json
      * @return $this
      */
     public function setJson($json)

@@ -8,16 +8,15 @@
                 <div class="text-center my-5">
                     <span class="success-icon py-3 px-3"><i class="fa-solid fa-check"></i></span>
                 </div>
-                <div class="text-center my-2 mb-5">
+                <div class="text-center my-2">
                     <span class="model_title">
                         {{ $title }}
                     </span>
                     <p class="model_description">
                         {{ $desc }} <br>
                     </p>
-                    <button type="button" class="btn btn-secondary col"
+                    <button type="button" class="btn btn-secondary"
                         data-bs-dismiss="modal">{{ $closeText }}</button>
-
                     {{-- @foreach ($ButtonArray as $item)
                         <a href="{{ $item['link'] }}" class="btn btn-primary">{{ $item['text'] }}</a>
                     @endforeach --}}
@@ -26,6 +25,7 @@
                     @else
                         {{ $slot }}
                     @endif
+
                 </div>
             </div>
         </div>
